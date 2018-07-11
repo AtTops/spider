@@ -1,5 +1,9 @@
 package spider.mglp.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 /**
  * <p>pakage: spider.mglp.service,descirption:</p>
  *
@@ -7,5 +11,6 @@ package spider.mglp.service;
  * @version V1.0
  * @since <pre>2018/7/11 下午4:49</pre>
  */
-public class DownloadImgs {
+public interface DownloadImgs {
+    void downloadImgAndNamed() throws IOException;
 }

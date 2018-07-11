@@ -104,7 +104,7 @@ public class GetImgsUrlImpl implements GetImgsUrl {
                     System.out.println(jsonText);
                     System.out.println(entry.getKey());
                 }
-                // images_url，这里大都只有5条数据，TODO：寻找其他地方出现的图片
+                // images_url，这个接口有且仅有5条图像数据链接，TODO：寻找其他地方出现的图片
                 if (root.findPath("images").toString().length() > 2) {
                     String[] images = root.findPath("images").toString().split(",");
                     int imagesCount = images.length;

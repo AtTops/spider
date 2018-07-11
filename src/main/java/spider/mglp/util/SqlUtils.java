@@ -76,4 +76,30 @@ public class SqlUtils {
         return hashMap;
     }
 
+    /**
+     * 获取Spu_code、taobao_link
+     *
+     * @return hashmap
+     */
+    public static HashMap<String, String> getSpuCodeAndImgsUrl() {
+        HashMap<String, String> hashMap = new HashMap<>(512, 0.7f);
+        Connection conn = null;
+        PreparedStatement preStmt = null;
+        ResultSet rs;
+        // "select spu_code,spider_imgs from product_spu;"
+        try {
+            conn = DbFactory.getConnection();
+            preStmt = conn.prepareStatement(SqlEnum.SELECT_SPU_IMG_URL.getDesc());
+            rs = preStmt.executeQuery();
+            while (rs.next()) {
+                hashMap.put(rs.getString("spu_code"), rs.getString("spider_imgs"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbFactory.closePreStmt(preStmt);
+            DbFactory.closeConnection(conn);
+        }
+        return hashMap;
+    }
 }
