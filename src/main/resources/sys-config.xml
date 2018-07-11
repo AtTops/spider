@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<config>
+    <db-info>
+        <driver-name>com.mysql.jdbc.Driver</driver-name>
+        <user-name>root</user-name>
+        <password>abc...123</password>
+        <url>jdbc:mysql://localhost:3306/items_url</url>
+    </db-info>
+</config>
