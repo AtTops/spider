@@ -121,9 +121,15 @@ public class GetImgsUrlImpl implements GetImgsUrl {
                     Random rand = new Random();
                     Thread.sleep(rand.nextInt(3000) + 500);
                 }
+            } else {
+                LOGGER.warn("{}未获取到图像链接",entry.getValue());
+            }
+            if (size % 100 == 0){
+                SqlUtils.updateImgsUrlByBatch(SqlEnum.BATCH_UPDATE_IMGS_URL.getDesc(), records);
+                records.clear();
             }
         }
-        System.out.println("更新数量 : " + records.size() + ",\t期望更新的总数量：" + (count-1));
+        System.out.println("更新数量 : " + size + ",\t期望更新的总数量：" + (count - 1));
         // batch批量插入
         SqlUtils.updateImgsUrlByBatch(SqlEnum.BATCH_UPDATE_IMGS_URL.getDesc(), records);
     }
