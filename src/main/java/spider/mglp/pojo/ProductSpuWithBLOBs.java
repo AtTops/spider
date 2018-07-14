@@ -1,10 +1,11 @@
 package spider.mglp.pojo;
 
 public class ProductSpuWithBLOBs extends ProductSpu {
-
     private String detailsImages;
 
     private String spiderImgs;
+
+    private String spiderImgsAll;
 
     public String getDetailsImages() {
         return detailsImages;
@@ -20,5 +21,13 @@ public class ProductSpuWithBLOBs extends ProductSpu {
 
     public void setSpiderImgs(String spiderImgs) {
         this.spiderImgs = spiderImgs == null ? null : spiderImgs.trim();
+    }
+
+    public String getSpiderImgsAll() {
+        return spiderImgsAll;
+    }
+
+    public void setSpiderImgsAll(String spiderImgsAll) {
+        this.spiderImgsAll = spiderImgsAll == null ? null : spiderImgsAll.trim();
     }
 }

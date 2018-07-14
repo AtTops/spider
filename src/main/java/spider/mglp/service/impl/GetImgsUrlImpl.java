@@ -37,7 +37,7 @@ import java.util.Random;
 public class GetImgsUrlImpl implements GetImgsUrl {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetImgsUrlImpl.class);
     private int count = 0;
-    private int size = 0;
+    private int size = 1;
     // ArrayList<? super ProductSpu> records = new ArrayList<>(256);
 
     @Override
@@ -57,7 +57,7 @@ public class GetImgsUrlImpl implements GetImgsUrl {
             System.out.println("itemId:" + itemId);
             count++;
 
-            hashMap.put(entry.getKey(), UrlEnum.API_PRIFIX.getDesc() + itemId + UrlEnum.API_SUFFIX.getDesc());
+            hashMap.put(entry.getKey(), newUrl);
         }
 
         System.out.println("期望获取的总记录数：" + hashMap.size());

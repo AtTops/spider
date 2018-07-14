@@ -20,11 +20,11 @@ import java.util.Map;
 public class DownloadImgsImpl implements DownloadImgs {
     @Override
     public void downloadImgAndNamed() throws IOException {
-        // 获取所有的spu_code和其对应的spider_imgs
+        // 获取所有的spu_code和其对应的spider_imgs_all
         HashMap<String, String> hashMap = SqlUtils.getSpuCodeAndImgsUrl();
         for (Map.Entry<String, String> entry : hashMap.entrySet()) {
             System.out.println(entry.getKey());
-            // split imgs_url
+            // split imgs_url_all
             String[] imgs_url = entry.getValue().split(",");
             int nameFlag = 0;
             for (String s : imgs_url) {
@@ -32,13 +32,13 @@ public class DownloadImgsImpl implements DownloadImgs {
                 // download imgs
                 // 避免 MalformedURLException: no protocol
                 System.out.println("===" + s);
-                URL url = new URL("https://" + s);
+                URL url = new URL(s);
                 //打开网络输入流
                 DataInputStream dis = new DataInputStream(url.openStream());
-                String newImageName = "/Users/wanghai/IdeaProjects/imgs/" + entry.getKey() + "_" + nameFlag + ".jpg";
+                String newImageName = "/Users/wanghai/IdeaProjects/detail_imgs_all/" + entry.getKey() + "_" + nameFlag + ".jpg";
                 //建立一个新的文件
                 FileOutputStream fos = new FileOutputStream(new File(newImageName));
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[2048];
                 int length;
                 //开始填充数据
                 while ((length = dis.read(buffer)) > 0) {

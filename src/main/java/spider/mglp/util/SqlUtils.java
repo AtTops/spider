@@ -29,13 +29,13 @@ public class SqlUtils {
     public static void updateImgsUrlByBatch(String basciSql, ArrayList<ProductSpuWithBLOBs> records) {
         Connection conn = null;
         PreparedStatement preStmt = null;
-        // "update product_spu set spider_imgs = ? where spu_code = ?"
+        // "update product_spu set spider_imgs_all = ? where spu_code = ?"
         try {
             conn = DbFactory.getConnection();
             preStmt = conn.prepareStatement(basciSql);
             for (int i = 0; i < records.size(); i++) {
                 ProductSpuWithBLOBs pswb = records.get(i);
-                preStmt.setString(1, pswb.getSpiderImgs());
+                preStmt.setString(1, pswb.getSpiderImgsAll());
                 preStmt.setString(2, pswb.getSpuCode());
                 preStmt.addBatch();
             }
@@ -55,6 +55,7 @@ public class SqlUtils {
      * @return hashmap
      */
     public static HashMap<String, String> getSpuCodeAndTbLink() {
+        System.out.println("-----------------------");
         HashMap<String, String> hashMap = new HashMap<>(512, 0.8f);
         Connection conn = null;
         PreparedStatement preStmt = null;
@@ -86,13 +87,41 @@ public class SqlUtils {
         Connection conn = null;
         PreparedStatement preStmt = null;
         ResultSet rs;
-        // "select spu_code,spider_imgs from product_spu;"
+        // "select spu_code,spider_imgs_all from product_spu;"
         try {
             conn = DbFactory.getConnection();
             preStmt = conn.prepareStatement(SqlEnum.SELECT_SPU_IMG_URL.getDesc());
             rs = preStmt.executeQuery();
             while (rs.next()) {
-                hashMap.put(rs.getString("spu_code"), rs.getString("spider_imgs"));
+                hashMap.put(rs.getString("spu_code"), rs.getString("spider_imgs_all"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbFactory.closePreStmt(preStmt);
+            DbFactory.closeConnection(conn);
+        }
+        return hashMap;
+    }
+
+    /**
+     * 获取item_id、imgs_link
+     *
+     * @return hashmap
+     */
+    public static HashMap<String, String> getItemIdAndImgsUrl() {
+        System.out.println("+++++++++++++++++++++");
+        HashMap<String, String> hashMap = new HashMap<>(512, 0.7f);
+        Connection conn = null;
+        PreparedStatement preStmt = null;
+        ResultSet rs;
+        // "SELECT item_id,url from itemId_urls where url IS NOT NULL"
+        try {
+            conn = DbFactory.getConnection();
+            preStmt = conn.prepareStatement(SqlEnum.SELECT_ITEMID_LINK.getDesc());
+            rs = preStmt.executeQuery();
+            while (rs.next()) {
+                hashMap.put(rs.getString("item_id"), rs.getString("url"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
