@@ -1816,62 +1816,62 @@ public class ProductSpuExample {
         }
 
         public Criteria andIfDownloadIsNull() {
-            addCriterion("if_download is null");
+            addCriterion("download_flag is null");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadIsNotNull() {
-            addCriterion("if_download is not null");
+            addCriterion("download_flag is not null");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadEqualTo(Boolean value) {
-            addCriterion("if_download =", value, "ifDownload");
+            addCriterion("download_flag =", value, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadNotEqualTo(Boolean value) {
-            addCriterion("if_download <>", value, "ifDownload");
+            addCriterion("download_flag <>", value, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadGreaterThan(Boolean value) {
-            addCriterion("if_download >", value, "ifDownload");
+            addCriterion("download_flag >", value, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("if_download >=", value, "ifDownload");
+            addCriterion("download_flag >=", value, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadLessThan(Boolean value) {
-            addCriterion("if_download <", value, "ifDownload");
+            addCriterion("download_flag <", value, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadLessThanOrEqualTo(Boolean value) {
-            addCriterion("if_download <=", value, "ifDownload");
+            addCriterion("download_flag <=", value, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadIn(List<Boolean> values) {
-            addCriterion("if_download in", values, "ifDownload");
+            addCriterion("download_flag in", values, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadNotIn(List<Boolean> values) {
-            addCriterion("if_download not in", values, "ifDownload");
+            addCriterion("download_flag not in", values, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadBetween(Boolean value1, Boolean value2) {
-            addCriterion("if_download between", value1, value2, "ifDownload");
+            addCriterion("download_flag between", value1, value2, "ifDownload");
             return (Criteria) this;
         }
 
         public Criteria andIfDownloadNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("if_download not between", value1, value2, "ifDownload");
+            addCriterion("download_flag not between", value1, value2, "ifDownload");
             return (Criteria) this;
         }
     }

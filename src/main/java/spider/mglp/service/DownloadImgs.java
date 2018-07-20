@@ -12,5 +12,5 @@ import java.net.MalformedURLException;
  * @since <pre>2018/7/11 下午4:49</pre>
  */
 public interface DownloadImgs {
-    void downloadImgAndNamed() throws IOException;
+    void downloadImgAndNamed(int flag, String savePath) throws IOException;
 }

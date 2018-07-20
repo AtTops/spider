@@ -48,7 +48,7 @@ public class GetImgsUrlImpl implements GetImgsUrl {
 
         for (Map.Entry<String, String> entry : hashMap.entrySet()) {
             // 获得itemId————————https://item.taobao.com/item.htm?id=568944784760&amp;amp;spm=2014.12440355.0.0
-            int begin = entry.getValue().lastIndexOf("?id=") + 4;
+            int begin = entry.getValue().lastIndexOf("id=") + 3;
 
             String itemId = entry.getValue().substring(begin, begin + 12);
             // 重新设置value，该value用来请求接口数据
