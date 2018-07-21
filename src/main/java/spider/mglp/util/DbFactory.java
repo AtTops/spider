@@ -8,7 +8,7 @@ import java.sql.*;
  * @Description 数据库操作的一些封装
  */
 public class DbFactory {
-//    private static String USER = "root";
+    //    private static String USER = "root";
 //    private static String PASSWORD = "abc..123";
 //    private static String DB_URL = "jdbc:mysql://localhost:3306/items_url";
     private static Connection conn = null;
@@ -39,7 +39,7 @@ public class DbFactory {
             e.printStackTrace();
         }
     }
-// 获得Statement对象
+    // 获得Statement对象
     public static Statement getStmt(Connection conn) {
         Statement stmt = null;
         try {
@@ -59,7 +59,7 @@ public class DbFactory {
             e.printStackTrace();
         }
     }
-// 获得PreparedStatement对象
+    // 获得PreparedStatement对象
     public static PreparedStatement getPreStmt(Connection conn,String sql) {
         PreparedStatement preStmt = null;
         try {
