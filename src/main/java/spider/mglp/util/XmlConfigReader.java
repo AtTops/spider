@@ -46,10 +46,10 @@ public class XmlConfigReader {
         }
         return instance;
     }
-/**
- * @return 返回jdbc相关信息
- */
- public JdbcConfig getJdbcConfig(){
+    /**
+     * @return 返回jdbc相关信息
+     */
+    public JdbcConfig getJdbcConfig(){
         return jdbcConfig;
     }
 
