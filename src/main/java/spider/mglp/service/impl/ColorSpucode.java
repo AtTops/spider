@@ -3,10 +3,7 @@ package spider.mglp.service.impl;
 import spider.mglp.util.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SqlUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -18,13 +15,12 @@ import java.util.*;
  * @version V1.0
  * @since <pre>2018/7/19 下午6:10</pre>
  */
-public class TestColorSpucode {
+public class ColorSpucode {
     /**
      * @param path       需要处理的图像的路径
      * @param removePath 处理之后移动的路径
-     * @param size       删除尺寸
      */
-    public static void addColorAndDeleteWidth(String path, String removePath, int size) {
+    public static void addColorAndDeleteWidth(String path, String removePath) {
         HashMap<String, String> hashMap;
         // 获取（spu，color）map
         hashMap = SqlUtils.getSpuCodeAndColor();
@@ -61,9 +57,9 @@ public class TestColorSpucode {
                     count++;
                     System.out.println(count);
 //                        System.out.println("=====" + spucode);
-                        String realName = spucode + "_" + hashMap.get(spucode) + startName.substring(startName.lastIndexOf("_"));
+                    String realName = spucode + "_" + hashMap.get(spucode) + startName.substring(startName.lastIndexOf("_"));
 //                        System.out.println(realName);
-                        File newName = new File(removePath + "/" + realName);
+                    File newName = new File(removePath + "/" + realName);
                     // 重命名并且移动
                     if (!f.renameTo(newName)) {
                         System.out.println((startName + "移动失败"));
@@ -77,7 +73,6 @@ public class TestColorSpucode {
     public static void main(String[] args) {
         String path = "/Users/wanghai/images/img_20";
         String removePath = "/Users/wanghai/images/filter_img_20";
-        int size = 750;
-        TestColorSpucode.addColorAndDeleteWidth(path, removePath, size);
+        ColorSpucode.addColorAndDeleteWidth(path, removePath);
     }
 }

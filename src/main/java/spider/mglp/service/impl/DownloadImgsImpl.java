@@ -93,6 +93,7 @@ public class DownloadImgsImpl implements DownloadImgs {
     public static void main(String[] args) {
         DownloadImgsImpl downloadImgs = new DownloadImgsImpl();
         String savePath = "/Users/wanghai/IdeaProjects/img_20/";
+        // TODO: 每次更新 flag
         try {
             downloadImgs.downloadImgAndNamed(2, savePath);
         } catch (IOException e) {
