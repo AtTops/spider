@@ -45,7 +45,7 @@ public class SizeChartImplTest {
     public void testDownloadSizeChart() throws Exception {
 
         Document doc;
-        InputStream is = new URL("https://desc.alicdn.com/i7/560/610/560615541698/TB12IJmEHGYBuNjy0Fo8qwiBFla.desc%7Cvar%5Edesc%3Bsign%5E0ded67512b90f792153a500f4404db11%3Blang%5Egbk%3Bt%5E1532052381").openStream();
+        InputStream is = new URL("https://desc.alicdn.com/i2/560/101/566108943940/TB1aTPTDKuSBuNjSszi8qvq8pla.desc%7Cvar%5Edesc%3Bsign%5E7ea4dfc39f3016d97e50f6227486b9d7%3Blang%5Egbk%3Bt%5E1532062377").openStream();
 //        InputStream is = new URL("https://desc.alicdn.com/i8/560/210/567215404672/TB1O141lFooBKNjSZFP8qta2Xla.desc%7Cvar%5Edesc%3Bsign%5E8c321adf54427e4f878bbe66e3128af9%3Blang%5Egbk%3Bt%5E1532398225").openStream();
         String html = "";
         try {
@@ -60,12 +60,12 @@ public class SizeChartImplTest {
             e.printStackTrace();
         }
         doc = Jsoup.parse(html);
-        Elements elements = doc.select("div.tryTable");
+        Elements elements = doc.select("div.screenshot.section.chrome");
 //        Elements elements = doc.select("div.tablet.sizeTable");
         // 选择到试穿div
         Element last = elements.last();
         // 选择到table
-        Elements trs = last.select("div.table").select("tr");
+        Elements trs = last.select("table").select("tr");
         int column = trs.size();
         System.out.println("该试穿表的行数是：" + column);
         String spuCode = "12345678";
@@ -85,8 +85,9 @@ public class SizeChartImplTest {
                 values[j] = val.replaceAll("\\\\","\t").trim();
             }
             csvWriter.writeRecord(values);
+            csvWriter.flush();
+
         }
-        csvWriter.flush();
         csvWriter.close();
 
 
