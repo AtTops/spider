@@ -1,5 +1,6 @@
 package spider.mglp.service.impl;
 
+import com.csvreader.CsvWriter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -7,6 +8,7 @@ import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import spider.mglp.enums.UrlEnum;
 import spider.mglp.util.SpiderHeader;
 
 import java.io.BufferedReader;
@@ -42,20 +44,9 @@ public class SizeChartImplTest {
     @Test
     public void testDownloadSizeChart() throws Exception {
 
-        Document doc = null;
-// <html>
-// <head></head>
-// <body>
-
-// </body>
-//</html>
-        // 解析html，获得商品url
-//        Elements elements = doc.select("div.[screenshot section png]");
-//        Elements elements = doc.getElementsByClass("screenshot section png");
-//        Element e = elements.last();
-//        System.out.println(e.toString());
-
-        InputStream is = new URL("https://desc.alicdn.com/i1/570/251/571258166663/TB1l6Fvj0cnBKNjSZR08qwFqFla.desc%7Cvar%5Edesc%3Bsign%5Ecfcf5cfd6b5404682199e1a834a113ab%3Blang%5Egbk%3Bt%5E1531372309").openStream();
+        Document doc;
+        InputStream is = new URL("https://desc.alicdn.com/i7/560/610/560615541698/TB12IJmEHGYBuNjy0Fo8qwiBFla.desc%7Cvar%5Edesc%3Bsign%5E0ded67512b90f792153a500f4404db11%3Blang%5Egbk%3Bt%5E1532052381").openStream();
+//        InputStream is = new URL("https://desc.alicdn.com/i8/560/210/567215404672/TB1O141lFooBKNjSZFP8qta2Xla.desc%7Cvar%5Edesc%3Bsign%5E8c321adf54427e4f878bbe66e3128af9%3Blang%5Egbk%3Bt%5E1532398225").openStream();
         String html = "";
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, "GBK"));
@@ -65,46 +56,41 @@ public class SizeChartImplTest {
                 sb.append((char) cp);
             }
             html = sb.toString();
-//            System.out.println(html);
         } catch (IOException e) {
             e.printStackTrace();
         }
         doc = Jsoup.parse(html);
-        // 解析html，获得商品url
-        String regex = "^https://img.alicdn.com/imgextra/i.*";
-        Pattern p = Pattern.compile(regex);
-        StringBuilder stringBuilder = new StringBuilder();
-        Elements elements = doc.select("div.screenshot.section.png");
+        Elements elements = doc.select("div.tryTable");
+//        Elements elements = doc.select("div.tablet.sizeTable");
         // 选择到试穿div
         Element last = elements.last();
         // 选择到table
-        Elements trs = last.select("div.tablet").select("tr");
-        System.out.println("详情图elements size 期望是1，实际上是：" + trs.size());
+        Elements trs = last.select("div.table").select("tr");
+        int column = trs.size();
+        System.out.println("该试穿表的行数是：" + column);
+        String spuCode = "12345678";
+        String filePathAndName = UrlEnum.BASIC_OUTFILE_PATH.getDesc() + spuCode + "_" + column + ".csv";
+        // 创建CSV写对象
+        CsvWriter csvWriter = new CsvWriter(filePathAndName, ',', Charset.forName("UTF-8"));
         // 获取tr
-        for (int i = 0; i < trs.size(); i++) {
+        for (int i = 0; i < column; i++) {
+            System.out.println("这是第 +++++++++  " + (i + 1) + "行数据。");
             //获取每一行的列
             Elements tds = trs.get(i).select("td");
+            String[] values = new String[tds.size()];
             for (int j = 0; j < tds.size(); j++) {
-                //对每一行中的某些你需要的列进行处理
-
                 //获取第i行第j列的值
-
-                String oldClose = tds.get(j).text();
-
-                //接下来，进行你的操作
-                System.out.println(oldClose);
-                System.out.println();
+                String val = tds.get(j).text();
+//                System.out.println(val.replaceAll("\\\\","").trim());
+                values[j] = val.replaceAll("\\\\","\t").trim();
             }
-
+            csvWriter.writeRecord(values);
         }
-//        Elements elements2 = e.getElementsByTag("img");
-//        for (Element e2 : elements2) {
-//            String contents = e2.attr("src");
-//            Matcher m = p.matcher(contents);
-//            while (m.find()) {
-//                stringBuilder.append(contents.substring(m.start(), m.end()));
-//                stringBuilder.append(",");
-//            }
-//        }
+        csvWriter.flush();
+        csvWriter.close();
+
+
+//        SizeChartImpl sizeChart = new SizeChartImpl();
+//        sizeChart.downloadSizeChart();
     }
 }

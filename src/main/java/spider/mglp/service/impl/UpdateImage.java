@@ -49,7 +49,7 @@ public class UpdateImage {
         // 遍历spu_code，获取本地是Spu_code_colorNum开头的图像
         for (String spuCode : hashSet) {
             // 本次只上传该spu开头的图像
-            String coverPath = "init_value";
+            String coverPath = "init";
             StringBuilder cdnImgsPath = new StringBuilder();
             // 用来解决headImage
             int thisCover = 0;
@@ -143,7 +143,8 @@ public class UpdateImage {
                     e.printStackTrace();
                 }
             } else {
-                LOGGER.error("img :{} upload wrong,  message: {},  status_code: {}", imageFile.getName(), rootNode.path("message"), statusCode);
+                LOGGER.error("status_code: {}",statusCode);
+                LOGGER.error("img :{} upload wrong,  message: {},  ", imageFile.getName(), rootNode.path("message"));
             }
         } catch (IOException e) {
             e.printStackTrace();

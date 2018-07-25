@@ -100,6 +100,6 @@ public class RenameBack {
 
     public static void main(String[] args) {
         RenameBack renameBack = new RenameBack();
-        renameBack.renameBackPic("/Users/wanghai/Downloads/to_upload/test","/Users/wanghai/Downloads/to_upload/test");
+        renameBack.renameBackPic("/Users/wanghai/Downloads/B/0","/Users/wanghai/Downloads/B/0");
     }
 }
