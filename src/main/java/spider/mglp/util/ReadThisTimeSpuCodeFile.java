@@ -1,9 +1,6 @@
 package spider.mglp.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,7 +61,13 @@ public class ReadThisTimeSpuCodeFile {
         return spuSetLocal;
     }
 
-    public static void main(String[] args) {
-        ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/wanghai/Downloads/to_upload/0");
+    public static void main(String[] args) throws IOException {
+        HashSet<String> setlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/Shared/try_chart");
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("/Users/Shared/try_chart/spu/spildered.txt")));
+        for (String s:setlocal){
+            bufferedWriter.write(s);
+            bufferedWriter.write("\n");
+        }
+        bufferedWriter.close();
     }
 }
