@@ -1,5 +1,3 @@
-package spider.mglp.service.impl;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;

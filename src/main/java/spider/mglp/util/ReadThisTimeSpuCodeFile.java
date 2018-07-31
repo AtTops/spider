@@ -62,8 +62,8 @@ public class ReadThisTimeSpuCodeFile {
     }
 
     public static void main(String[] args) throws IOException {
-        HashSet<String> setlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/Shared/try_chart");
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("/Users/Shared/try_chart/spu/spildered.txt")));
+        HashSet<String> setlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/Shared/size_chart");
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("/Users/Shared/size_chart/spu/spidered.txt")));
         for (String s:setlocal){
             bufferedWriter.write(s);
             bufferedWriter.write("\n");

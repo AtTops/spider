@@ -33,9 +33,9 @@ public class SizeChartImpl implements spider.mglp.service.SizeChart {
         HashMap<String, String> itemIdLinkMap = SqlUtils.getItemIdAndImgsUrl();
         // 查询数据库，获取所有的spu_code和taobao_link
         HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink();
-        Set<String> spuSetlocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "try_chart/spu/spidered.txt");
-        Set<String> spuSet = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "try_chart/spu/spucode.txt");
-        Set<String> blaklist = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "try_chart/spu/blaklist.txt");
+        Set<String> spuSetlocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/spidered.txt");
+        Set<String> spuSet = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/spucode.txt");
+        Set<String> blaklist = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/blaklist.txt");
         spuSet.removeAll(spuSetlocal);
         spuSet.removeAll(blaklist);
         for (String s : spuSet) {
@@ -52,7 +52,7 @@ public class SizeChartImpl implements spider.mglp.service.SizeChart {
             }
         }
         // 继续爬取更新
-        File spidered = new File(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "try_chart/spu/spidered.txt");
+        File spidered = new File(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/spidered.txt");
         FileOutputStream fileOutputStream = null;
         try {
             // 追加写入
@@ -93,18 +93,18 @@ public class SizeChartImpl implements spider.mglp.service.SizeChart {
                 }
                 doc = Jsoup.parse(html);
                 // 尺码表和试穿表,第一波，很多只有size
-//                Elements elementsSize = doc.select("div.sizeTable");
+                //Elements elementsSize = doc.select("div.sizeTable");
 //                Elements elementsTry = doc.select("div.tryTable");
                 // 第二波，解决更多的试穿
-                // Elements elementsTry = doc.select("div.screenshot.section.png");
+                Elements elementsTry = doc.select("div.screenshot.section.png");
                 //Elements elementsTry2 = doc.select("div.screenshot.png.section");
                 // 第三波，早安樊樊，https://item.taobao.com/item.htm?id=569167254509
                 // Elements elementsTry = doc.select("div.tac.size2.tablet");
                 // 第四波，小狍   https://item.taobao.com/item.htm?id=561996761230
 //                Elements elementsTry = doc.select("div.tablet.trytab");
                 // 第五波，十元诗苑   https://item.taobao.com/item.htm?id=566108943940
-                Elements elementsTry = doc.select("div.screenshot.section.png");
-                tryOrSizeChart_1(elementsTry, spuCode, "try_chart/", url, "try", fileOutputStream);
+//                Elements elementsTry = doc.select("div.screenshot.section.chrome.png.tac");
+                tryOrSizeChart_1(elementsTry, spuCode, "size_chart/", url, "size", fileOutputStream);
             }
         }
         try {
@@ -125,22 +125,21 @@ public class SizeChartImpl implements spider.mglp.service.SizeChart {
      * @param status
      */
     public int tryOrSizeChart_1(Elements elements, String spuCode, String sizeOrtry, String url, String status, FileOutputStream fileOutputStream) {
-        if (elements.size() > 4) {
+        if (elements.size() > 0) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@:" + elements.size() + "  =    " + url);
-//            // 选择到试穿div
+            // 选择到试穿div
 //            Element last = elements.last();
 //            // 选择到table
 //            Elements trs = last.select("table").select("tr");
-////            Elements trs = last.select("tr");
 
             HashSet<Element> elements1 = new HashSet<>();
             Element[] elements2 = new Element[elements.size()];
             int k = 0;
-            for (Element e : elements){
+            for (Element e : elements) {
                 elements2[k++] = e;
             }
             // 仅仅针对"草莓跳"，elements取5的第二
-            Elements trs = elements2[3].select("table").select("tr");
+            Elements trs = elements2[elements.size() - 2].select("table").select("tr");
 
 
             int column = trs.size();

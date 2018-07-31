@@ -45,7 +45,7 @@ public class SizeChartImplTest {
     public void testDownloadSizeChart() throws Exception {
 
         Document doc;
-        InputStream is = new URL("https://desc.alicdn.com/i2/560/101/566108943940/TB1aTPTDKuSBuNjSszi8qvq8pla.desc%7Cvar%5Edesc%3Bsign%5E7ea4dfc39f3016d97e50f6227486b9d7%3Blang%5Egbk%3Bt%5E1532062377").openStream();
+        InputStream is = new URL("https://desc.alicdn.com/i7/560/160/560160157717/TB14ARflnmWBKNjSZFB8qtxUFla.desc%7Cvar%5Edesc%3Bsign%5E159015f2a06798e63d2213417beb9de0%3Blang%5Egbk%3Bt%5E1531633662").openStream();
 //        InputStream is = new URL("https://desc.alicdn.com/i8/560/210/567215404672/TB1O141lFooBKNjSZFP8qta2Xla.desc%7Cvar%5Edesc%3Bsign%5E8c321adf54427e4f878bbe66e3128af9%3Blang%5Egbk%3Bt%5E1532398225").openStream();
         String html = "";
         try {
@@ -60,7 +60,7 @@ public class SizeChartImplTest {
             e.printStackTrace();
         }
         doc = Jsoup.parse(html);
-        Elements elements = doc.select("div.screenshot.section.chrome");
+        Elements elements = doc.select("div.screenshot.section.png");
 //        Elements elements = doc.select("div.tablet.sizeTable");
         // 选择到试穿div
         Element last = elements.last();

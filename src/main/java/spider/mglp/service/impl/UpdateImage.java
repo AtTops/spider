@@ -153,27 +153,6 @@ public class UpdateImage {
         return cdnPath;
     }
 
-//    public static HashMap<String, Integer> getFileNumPerSpu(String path) {
-//        HashMap<String, Integer> map = new HashMap<>();
-//        File files = new File(path);        //获取其file对象
-//        File[] fs = files.listFiles();    //遍历path下的文件和目录，放在File数组中
-//        assert fs != null;
-//        int count = 0;
-//        for (File f : fs) {
-//            // 若非目录(即文件)  去掉.开头的隐藏文件
-//            if (!f.isDirectory() && !f.isHidden()) {
-//                String startName = f.getName();
-//                String spucode = startName.substring(0, 12);
-//                if (!map.containsKey(spucode)) {
-//                    map.put(spucode, 1);
-//                } else {
-//                    map.put(spucode, map.get(spucode) + 1);
-//                }
-//            }
-//        }
-//        return map;
-//    }
-
     public static void main(String[] args) {
         String path = "/Users/wanghai/Downloads/to_upload/0";
 //        System.out.println(UpdateImage.upload(path));
