@@ -53,7 +53,7 @@ public class SqlUtils {
     }
 
     /**
-     * 获取Spu_code、taobao_link
+     * 获取今天在架的Spu_code、taobao_link
      *
      * @param spuCode 如果传入，则搜索指定的spucode，不传入，则批量
      * @return HashMap

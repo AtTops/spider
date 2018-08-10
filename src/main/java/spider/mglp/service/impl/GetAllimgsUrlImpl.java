@@ -31,20 +31,13 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
 
     @Override
     public void getAllImgsUrlFromApi() {
-//        HashSet<String> idSet = new HashSet<>();
-        // 查询数据库，获取itemId——链接 数据
+        // 查询数据库（手动录入的库），获取itemId——链接 数据
         HashMap<String, String> itemIdLinkMap = SqlUtils.getItemIdAndImgsUrl();
-//        for (Map.Entry<String, String> entry : itemIdLinkMap.entrySet()) {
-//            System.out.println(entry.getKey() + "====" + entry.getValue());
-//        }
-        // 查询数据库，获取所有的spu_code和taobao_link(如果不给参数)
+        // 读取磁盘文件，今日所有在架状态的spu
         HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink();
         System.out.println("本地所有spucode数量" + spuIDMap.size());
         // 只留下本次需要找图像链接的, "/Users/wanghai/Desktop/spucode.txt"
-
-
-        spuIDMap = GetAllimgsUrlImpl.filtrationSpuCode(spuIDMap,"/Users/wanghai/Desktop/spucode_remain_20180720.txt");
-
+        spuIDMap = GetAllimgsUrlImpl.filtrationSpuCode(spuIDMap, "/Users/wanghai/Desktop/spucode_remain_20180720.txt");
 
         System.out.println(spuIDMap.size());
         ArrayList<ProductSpuWithBLOBs> records = new ArrayList<>(256);
@@ -85,7 +78,7 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
                 StringBuilder stringBuilder = new StringBuilder();
                 Elements elements = doc.select("div[data-title=\"模特效果图\"]");
                 System.out.println("详情图elements size 期望是1，实际上是：" + elements.size());
-                if (elements.size() == 1){
+                if (elements.size() == 1) {
                     // 可以进一步筛选的情况
                     for (Element e : elements) {
                         Elements elements2 = e.getElementsByTag("img");
@@ -98,9 +91,9 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
                             }
                         }
                     }
-            }else {
-                    LOGGER.info("item ID\t{} 爬取所有图片，没有过滤",entry.getKey());
-                   // 这种情况，我们就拿所有的图像
+                } else {
+                    LOGGER.info("item ID\t{} 爬取所有图片，没有过滤", entry.getKey());
+                    // 这种情况，我们就拿所有的图像
                     Elements elements2 = doc.getElementsByTag("img");
                     for (Element e2 : elements2) {
                         String contents = e2.attr("src");
@@ -127,7 +120,7 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
     }
 
     // 仅仅留下我们本次需要下载的spucode
-    public static HashMap<String, String> filtrationSpuCode(HashMap<String, String> spuIDMap,String thisTimeSpuPath) {
+    public static HashMap<String, String> filtrationSpuCode(HashMap<String, String> spuIDMap, String thisTimeSpuPath) {
         Set<String> spuSetThisTime = ReadThisTimeSpuCodeFile.readSpuFile(thisTimeSpuPath);
         // 删除不要的code
         for (Iterator<Map.Entry<String, String>> it = spuIDMap.entrySet().iterator(); it.hasNext(); ) {

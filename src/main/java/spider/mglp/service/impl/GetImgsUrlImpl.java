@@ -28,12 +28,13 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * <p>pakage: spider.mglp.service.impl,descirption:</p>
- *
+ * <p>pakage: spider.mglp.service.impl</p>
+ * descirption: 从接口获取图片，已经废弃
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/7/10 下午3:17</pre>
  */
+@Deprecated
 public class GetImgsUrlImpl implements GetImgsUrl {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetImgsUrlImpl.class);
     private int count = 0;
