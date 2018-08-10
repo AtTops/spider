@@ -8,7 +8,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spider.mglp.enums.UrlEnum;
-import spider.mglp.pojo.SizeChart;
 import spider.mglp.util.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SqlUtils;
 
@@ -33,8 +32,11 @@ public class SizeChartImpl implements spider.mglp.service.SizeChart {
         HashMap<String, String> itemIdLinkMap = SqlUtils.getItemIdAndImgsUrl();
         // 查询数据库，获取所有的spu_code和taobao_link
         HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink();
-        Set<String> spuSetlocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/spidered.txt");
+        // 读取已经下载的且合格的spu集合
+        Set<String> spuSetlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/");
+        // 需要爬取的spu集合
         Set<String> spuSet = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/spucode.txt");
+        // 读取黑名单，大多是
         Set<String> blaklist = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/blaklist.txt");
         spuSet.removeAll(spuSetlocal);
         spuSet.removeAll(blaklist);

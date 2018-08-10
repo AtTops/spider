@@ -6,14 +6,19 @@ import java.util.Set;
 
 /**
  * <p>pakage: spider.mglp.util</p>
- * <p>
- * descirption:
+ *
+ * descirption: 获取已经下载/获得的数据的spu，该类下的两个方法往往需要结合使用
  *
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/7/20 下午3:06</pre>
  */
 public class ReadThisTimeSpuCodeFile {
+    /**
+     * 读取指定文件中的spu，该文件往往是获取清理后，或者将一系列csv文件处理为一个json文件时，将这些文件的spu写入了一个单独的文件
+     * @param path 该文件的路径
+     * @return 该文件spu集合
+     */
     public static Set<String> readSpuFile(String path) {
         Set<String> spuSet = null;
 
@@ -40,6 +45,12 @@ public class ReadThisTimeSpuCodeFile {
         System.out.println("spuSet size:  "+spuSet.size());
         return spuSet;
     }
+
+    /**
+     * 读取指定文件夹中所有文件的spu，这些文件已spu开头命名，比如爬取的尺码csv、试穿csv
+     * @param path 该文件夹的路径
+     * @return 该文件夹中所有文件的spu集合
+     */
     public static HashSet<String> countSpuFileLocal(String path) {
         HashSet<String> spuSetLocal = new HashSet<>();
 

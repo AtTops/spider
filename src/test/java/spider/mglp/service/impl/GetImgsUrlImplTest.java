@@ -37,22 +37,24 @@ public class GetImgsUrlImplTest {
      */
     @Test
     public void testGetImgsUrlFromApi() throws Exception {
-        String url = "https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/?data=%7B%22itemNumId%22%3A%22569082944413%22%2C%22%7D";
+        String itemId = "571083893586";
+        String pageNum = "2";
+        String url = "https://rate.taobao.com/feedRateList.htm?auctionNumId=" + itemId + "&currentPageNum=" + pageNum;
         InputStream is = new URL(url).openStream();
         String jsonText;
         StringBuilder sb = new StringBuilder();
         try {
             BufferedReader brd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             sb = new StringBuilder();
-            int cp;
-            while ((cp = brd.read()) != -1) {
-                sb.append((char) cp);
+            String cp;
+            while ((cp = brd.readLine()) != null) {
+                sb.append(cp);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(sb.toString());
         jsonText = sb.toString();
+        jsonText = jsonText.substring(1, jsonText.length() - 1);
         // 无效的返回数据
         if (jsonText.length() < 5)
             System.out.println("===" + jsonText);
@@ -63,20 +65,51 @@ public class GetImgsUrlImplTest {
         } catch (JsonParseException e) {
             System.out.println(jsonText);
         }
-        // images_url，这里大都只有5条数据，TODO：寻找其他地方出现的图片
-        if (root.findPath("images").toString().length() > 2) {
-            String[] images = root.findPath("images").toString().split(",");
-            int imagesCount = images.length;
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < imagesCount; i++) {
-                stringBuilder.append(images[i].replaceAll("[\\[\\]\"]", " ").trim().substring(2));
-                if (i != imagesCount - 1)
-                    stringBuilder.append(",");
+        assert root != null;
+        System.out.println("总数量：" + root.path("total").asInt());
+        JsonNode commentsNode = root.path("comments");
+        System.out.println("本页评论总数量：" + commentsNode.size());
+        for (int i = 0; i < commentsNode.size(); i++) {
+            JsonNode commentNow = commentsNode.get(i);
+            // 获取到当前评论详情
+            StringBuilder builder = new StringBuilder();
+            builder.append(itemId).append(",").append(root.path("total").asInt()).append(",");
+            // 初次评论时间
+            String fCommentDate = commentNow.path("date").toString().replaceAll("\"", "");
+            builder.append(fCommentDate).append(",");
+            // 获取用户信息
+            builder.append(commentNow.path("user").path("nick").toString().replaceAll("\"", "")).append(",").append(commentNow.path("user").path("vipLevel").toString()).append(",");
+            // 获取sku信息
+            builder.append(commentNow.path("auction").path("sku").toString().replaceAll("\"", "").replaceAll("&nbsp;&nbsp", "  ")).append(",");
+            // 初次评论内容
+            String fCommentValue = commentsNode.get(i).path("content").toString().replaceAll("\"", "").replaceAll(",", "，");
+            //System.out.println(i + "===" + commentsNode.get(i));
+            builder.append(fCommentValue).append(",");
+            // 追加评论以及滞后时长
+            JsonNode appendComment = commentNow.path("append");
+            if (appendComment.toString().length() > 5) {
+                builder.append(appendComment.path("dayAfterConfirm")).append(",").append(appendComment.path("content").toString().replaceAll("\"", ""));
+            } else {
+                builder.append(",");
             }
-            // 如果确实有记录到链接，则给赋值数据库
-            if (stringBuilder.toString().trim().length() > 5) {
-                System.out.println(stringBuilder.toString());
-            }
+//            System.out.println("fCommentValue" + fCommentValue);
+            System.out.println(builder.toString());
+
         }
+        // images_url，这里大都只有5条数据，TODO：寻找其他地方出现的图片
+//        if (root.findPath("images").toString().length() > 2) {
+//            String[] images = root.findPath("images").toString().split(",");
+//            int imagesCount = images.length;
+//            StringBuilder stringBuilder = new StringBuilder();
+//            for (int i = 0; i < imagesCount; i++) {
+//                stringBuilder.append(images[i].replaceAll("[\\[\\]\"]", " ").trim().substring(2));
+//                if (i != imagesCount - 1)
+//                    stringBuilder.append(",");
+//            }
+//            // 如果确实有记录到链接，则给赋值数据库
+//            if (stringBuilder.toString().trim().length() > 5) {
+//                System.out.println(stringBuilder.toString());
+//            }
+//        }
     }
 } 

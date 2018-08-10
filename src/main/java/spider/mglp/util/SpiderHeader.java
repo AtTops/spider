@@ -4,12 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>pakage: spider.mglp.util,descirption:</p>
+ * <p>pakage: spider.mglp.util</p>
  *
+ * descirption:目前看来，这个Header没什么用处,@Deprecated
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/7/9 下午7:28</pre>
  */
+@Deprecated
 public class SpiderHeader {
     public static Map<String, String> headers;
 
