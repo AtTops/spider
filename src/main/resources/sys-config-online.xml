@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<config>
-    <db-info>
-        <driver-name>com.mysql.jdbc.Driver</driver-name>
-        <user-name>rs_read</user-name>
-        <password>JlhZeJb1xd7X6BI5ucmEsxvebof9soCO</password>
-        <url>jdbc:mysql://rm-m5eh88dfuiq4djnylxo.mysql.rds.aliyuncs.com:3306/shendeng-admin-db</url>
-    </db-info>
-</config>
