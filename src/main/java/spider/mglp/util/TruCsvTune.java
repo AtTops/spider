@@ -13,7 +13,7 @@ import java.io.*;
  * @version V1.0
  * @since <pre>2018/8/8 下午4:46</pre>
  */
-public class CsvTune {
+public class TruCsvTune {
     // 原始拼接生成
     private static final String PATH_READ = "/Users/wanghai/shendeng_back/try_nochange_2018-08-09.json";
     // 原始修改为7列
@@ -24,7 +24,7 @@ public class CsvTune {
     /**
      * 处理数据为期望的7个列，未处理体重格式化
      *
-     * @throws IOException ioexception
+     * @throws IOException IOException
      */
     public static void fields7(LocalDate localDate) throws IOException {
         InputStreamReader read = new InputStreamReader(new FileInputStream(new File(PATH_READ) + localDate.toString() + ".json"), "utf-8");
@@ -189,6 +189,6 @@ public class CsvTune {
 
     public static void main(String[] args) throws IOException {
         LocalDate localDate = LocalDate.now();
-        CsvTune.formatKg(localDate);
+        TruCsvTune.formatKg(localDate);
     }
 }

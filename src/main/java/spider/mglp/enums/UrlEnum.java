@@ -16,8 +16,23 @@ public enum UrlEnum {
     // 从接口拿图像的url后缀
     API_SUFFIX("%22%2C%22exParams%22%3A%22%7B%5C%22id%5C%22%3A%5C%22571597818260%5C%22%7D%22%2C%22detail_v%22%3A%223.1.1%22%2C%22ttid%22%3A%222018%40taobao_iphone_9.9.9%22%2C%22utdid%22%3A%22123123123123123%22%7D", 3),
     ITEM_URL("https://item.taobao.com/item.htmid=", 4),
+    // 每日在架spu文件，每天只更新一次,以spu_日期命名
     SPU_EVERYDAY_PATH("/Users/wanghai/spider/spu_everyday/", 5),
-    BASIC_OUTFILE_PATH("/Users/Shared/", 6);
+    // 已经下载图片成功的SPU，追加
+    SPU_DOWNLOADED_IMGS("/Users/wanghai/spider/img/spu/img_downloaded.txt", 6),
+    // 下载下来的图片的存放路径，后面是日期目录，然后是img文件
+    FILES_DOWNLOADED_IMGS("/Users/wanghai/spider/img/files/", 7),
+    // 已经爬取尺码的SPU，追加
+    SPU_SIZE_SUCCESS("/Users/wanghai/spider/size/spu/success/size_downloaded.txt", 8),
+    // 已经爬取试穿的SPU，追加
+    SPU_TRY_SUCCESS("/Users/wanghai/spider/try/spu/success/try_downloaded.txt", 9),
+    // 需要人工添加链接，每日重写，不记录历史
+    SPU_NEED_ADD_BYHAND("/Users/wanghai/spider/need_add_byhand.txt", 10),
+    // 已经爬取尺码的SPU，追加
+    FILES_SIZE_SUCCESS("/Users/wanghai/spider/size/files/csv/", 11),
+    // 已经爬取试穿的SPU，追加
+    FILES_TRY_SUCCESS("/Users/wanghai/spider/try/files/csv/", 12),
+    BASIC_OUTFILE_PATH("/Users/Shared/", 19);
 
     private int type;
     private String desc;

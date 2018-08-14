@@ -17,176 +17,233 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 /**
- * <p>pakage: spider.mglp.service.impl,descirption:</p>
- *
+ * <p>pakage: spider.mglp.service.impl</p>
  *
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/7/15 下午9:54</pre>
  */
-public class SizeChartImpl implements spider.mglp.service.SizeChart {
+public class SizeChartImpl {
     private static final Logger LOGGER = LoggerFactory.getLogger(SizeChartImpl.class);
 
-    @Override
-    public void downloadSizeChart() {
-        // 查询数据库，获取itemId——链接 数据
-        HashMap<String, String> itemIdLinkMap = SqlUtils.getItemIdAndImgsUrl();
-        // 查询数据库，获取所有的spu_code和taobao_link
-        HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink();
-        // 读取已经下载的且合格的spu集合
-        Set<String> spuSetlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/");
-        // 需要爬取的spu集合
-        Set<String> spuSet = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/spucode.txt");
-        // 读取黑名单，大多是
-        Set<String> blaklist = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/blaklist.txt");
-        spuSet.removeAll(spuSetlocal);
-        spuSet.removeAll(blaklist);
-        for (String s : spuSet) {
-            System.out.println(s);
+    /**
+     * @param localDate 字符串日期
+     * @param type      尺码还是试穿
+     * @param rules     对应的规则可能有哪些
+     */
+    public void downloadSizeOrTryChart(String localDate, String type, String[] rules) throws IOException {
+        // 1、查询数据库（手动录入的库），获取itemId——链接 数据
+        Map<String, String> itemIdLinkMap = SqlUtils.getItemIdAndImgsUrl();
+        // 2、读取磁盘文件，今日所有在架状态的spu
+        Map<String, String> spuIDMap = ReadThisTimeSpuCodeFile.readSpuEveryday(localDate);
+        // 3、读取截至前一天已经下载的spu集合
+        Set<String> yesterday;
+        // 爬取的数据放置的日期目录
+        String sizeParentFilePath = UrlEnum.FILES_SIZE_SUCCESS.getDesc() + localDate;
+        String tryParentFilePath = UrlEnum.FILES_TRY_SUCCESS.getDesc() + localDate;
+        // 本次主要想爬取的类型（size\try）的存储路径
+        String mainFilePath;
+        if (type.equals("size")) {
+            // TODO:json写逻辑spu落地对应_downloaded.txt还没有做
+            yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "json");
+            mainFilePath = sizeParentFilePath;
+        } else {
+            yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "json");
+            mainFilePath = tryParentFilePath;
         }
+        // 目录只创建一次
+        mkDir(sizeParentFilePath);
+        mkDir(tryParentFilePath);
+        // 删除已经爬取过的spu，前一天的历史记录，删除一次
+        deleteSpidered(spuIDMap, yesterday);
+        // 控制手动添加入库的文件只在第一次循环时写入
+        boolean writeByHandFlag = true;
+        FileWriter fileWriter = new FileWriter(new File(UrlEnum.SPU_NEED_ADD_BYHAND.getDesc()));
+        for (String rule : rules) {
+            // 读取截至本次循环，已经下载的，不需要再次下载了
+            Set<String> spidered = ReadThisTimeSpuCodeFile.countSpuFileLocal(mainFilePath);
+            // 删除之前循环下载了的，避免重复下载
+            if (spidered != null) {
+                deleteSpidered(spuIDMap, spidered);
+            }
+            // go\hand查看还有多少是没有手动添加的
+            int go = 0, hand = 0;
+            for (Map.Entry<String, String> entry : spuIDMap.entrySet()) {
+                // 从taobao_link获得itemId————————https://item.taobao.com/item.htm?id=568944784760&amp;amp;spm=2014.12440355.0.0
+                int begin = entry.getValue().lastIndexOf("id=") + 3;
+                String itemId = entry.getValue().substring(begin, begin + 12);
+                // spuCode用于待会的csv文件名
+                String spuCode = entry.getKey();
+                // 根据该itemId，查询itemIdLinkMap中的value值
+                if (itemIdLinkMap.containsKey(itemId)) {
+                    go++;
+                    System.out.println("go spuCode, " + spuCode + "\t=\t" + itemIdLinkMap.get(itemId));
+                    String url = itemIdLinkMap.get(itemId);
+                    // 获取数据中elements
+                    Elements elements = spiderFromUrl(url, rule);
+                    // 解析数据并写磁盘，csv TODO：变长确定是否是试穿表第二轮数据获取
+                    parseData(elements, spuCode, sizeParentFilePath, url, tryParentFilePath);
+                } else if (writeByHandFlag) {
+                    hand++;
+                    fileWriter.write(itemId + "," + entry.getValue());
+                    fileWriter.write("\n");
+                }
+            }
+            writeByHandFlag = false;
+            System.out.println("go  :" + go + " , hand  :" + hand);
+        }
+        fileWriter.close();
+    }
 
-        System.out.println("还未下载的 spu size:  " + spuSet.size());
-        // 删除不要的code
+    /**
+     * 删除已经爬取过的spu
+     *
+     * @param spuIDMap ,
+     * @param spidered ,
+     */
+    public void deleteSpidered(Map<String, String> spuIDMap, Set<String> spidered) {
         for (Iterator<Map.Entry<String, String>> it = spuIDMap.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry entry = it.next();
             String spuCode = (String) entry.getKey();
-            if (!spuSet.contains(spuCode)) {
+            if (spidered.contains(spuCode)) {
                 it.remove();
             }
         }
-        // 继续爬取更新
-        File spidered = new File(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "size_chart/spu/spidered.txt");
-        FileOutputStream fileOutputStream = null;
-        try {
-            // 追加写入
-            fileOutputStream = new FileOutputStream(spidered, true);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        for (Map.Entry<String, String> entry : spuIDMap.entrySet()) {
-            // 从taobao_link获得itemId————————https://item.taobao.com/item.htm?id=568944784760&amp;amp;spm=2014.12440355.0.0
-            int begin = entry.getValue().lastIndexOf("id=") + 3;
-            String itemId = entry.getValue().substring(begin, begin + 12);
-            // spuCode用于待会的csv文件名
-            String spuCode = entry.getKey();
-            // 根据该itemId，查询itemIdLinkMap中的value值
-            if (itemIdLinkMap.containsKey(itemId)) {
-                System.out.println("go spuCode, " + spuCode + "\t=\t" + itemIdLinkMap.get(itemId));
-                String url = itemIdLinkMap.get(itemId);
-                // 拿数据去
-                Document doc;
-                InputStream is = null;
-                try {
-                    is = new URL(url).openStream();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                String html = "";
-                try {
-                    assert is != null;
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(is, "GBK"));
-                    StringBuilder sb = new StringBuilder();
-                    int cp;
-                    while ((cp = rd.read()) != -1) {
-                        sb.append((char) cp);
-                    }
-                    html = sb.toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                doc = Jsoup.parse(html);
-                // 尺码表和试穿表,第一波，很多只有size
-                //Elements elementsSize = doc.select("div.sizeTable");
-//                Elements elementsTry = doc.select("div.tryTable");
-                // 第二波，解决更多的试穿
-                Elements elementsTry = doc.select("div.screenshot.section.png");
-                //Elements elementsTry2 = doc.select("div.screenshot.png.section");
-                // 第三波，早安樊樊，https://item.taobao.com/item.htm?id=569167254509
-                // Elements elementsTry = doc.select("div.tac.size2.tablet");
-                // 第四波，小狍   https://item.taobao.com/item.htm?id=561996761230
-//                Elements elementsTry = doc.select("div.tablet.trytab");
-                // 第五波，十元诗苑   https://item.taobao.com/item.htm?id=566108943940
-//                Elements elementsTry = doc.select("div.screenshot.section.chrome.png.tac");
-                tryOrSizeChart_1(elementsTry, spuCode, "size_chart/", url, "size", fileOutputStream);
+    }
+
+    /**
+     * 创建一次目录
+     *
+     * @param dirPath 目录
+     */
+    public void mkDir(String dirPath) {
+        File file = new File(dirPath);
+        // 如果文件夹不存在则创建
+        if (!file.exists() && !file.isDirectory()) {
+            if (!file.mkdir()) {
+                LOGGER.error("创建目录  {}  失败", dirPath);
             }
-        }
-        try {
-            assert fileOutputStream != null;
-            fileOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
+    /**
+     * 拿相关数据
+     *
+     * @param url  数据url
+     * @param rule 本次获取数据的获取标签规则
+     * @return Elements
+     */
+    public Elements spiderFromUrl(String url, String rule) {
+        Document doc;
+        InputStream is = null;
+        try {
+            is = new URL(url).openStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String html = "";
+        try {
+            assert is != null;
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, "GBK"));
+            StringBuilder sb = new StringBuilder();
+            int cp;
+            while ((cp = rd.read()) != -1) {
+                sb.append((char) cp);
+            }
+            html = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        doc = Jsoup.parse(html);
+        // 尺码表和试穿表,第一波，很多只有size
+        //Elements elementsSize = doc.select("div.sizeTable"); //
+//                Elements elementsTry = doc.select("div.tryTable"); //
+        // 第二波，解决更多的试穿
+        //Elements elementsTry2 = doc.select("div.screenshot.png.section");
+        // 第三波，早安樊樊，https://item.taobao.com/item.htm?id=569167254509
+        // Elements elementsTry = doc.select("div.tac.size2.tablet"); //
+        // 第四波，小狍   https://item.taobao.com/item.htm?id=561996761230
+//                Elements elementsTry = doc.select("div.tablet.trytab");  //
+        // 第五波，十元诗苑   https://item.taobao.com/item.htm?id=566108943940
+//                Elements elementsTry = doc.select("div.screenshot.section.chrome.png.tac");
+//        return doc.select("div.screenshot.section.png");
+        return doc.select(rule);
+    }
 
     /**
-     * 模板一
+     * 解析获取的数据
      *
      * @param elements
      * @param spuCode
+     * @param sizeParentPath
      * @param url
-     * @param status
+     * @param tryParentPath
+     * @return
      */
-    public int tryOrSizeChart_1(Elements elements, String spuCode, String sizeOrtry, String url, String status, FileOutputStream fileOutputStream) {
+    public int parseData(Elements elements, String spuCode, String sizeParentPath, String url, String tryParentPath) {
         if (elements.size() > 0) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@:" + elements.size() + "  =    " + url);
-            // 选择到试穿div
-//            Element last = elements.last();
-//            // 选择到table
-//            Elements trs = last.select("table").select("tr");
-
-            HashSet<Element> elements1 = new HashSet<>();
-            Element[] elements2 = new Element[elements.size()];
-            int k = 0;
-            for (Element e : elements) {
-                elements2[k++] = e;
-            }
-            // 仅仅针对"草莓跳"，elements取5的第二
-            Elements trs = elements2[elements.size() - 2].select("table").select("tr");
-
-
-            int column = trs.size();
-            if (column == 0) {
-                return -1;
-            }
-            System.out.println(column + "    ..........");
-            String filePathAndName = UrlEnum.BASIC_OUTFILE_PATH.getDesc() + sizeOrtry + spuCode + "_" + status + "_" + column + ".csv";
-            // 创建CSV写对象
-            CsvWriter csvWriter = new CsvWriter(filePathAndName, ',', Charset.forName("UTF-8"));
-            // 获取tr
-            for (int i = 0; i < column; i++) {
-                System.out.println("这是第 +++++++++  " + (i + 1) + "行数据。");
-                //获取每一行的列
-                Elements tds = trs.get(i).select("td");
-                String[] values = new String[tds.size()];
-                for (int j = 0; j < tds.size(); j++) {
-                    //获取第i行第j列的值
-                    String val = tds.get(j).text();
-                    // 多尺码，比如M\\s,所以用的制表符隔开
-                    values[j] = val.replaceAll("\\\\", "\t").trim();
+            for (int i = 0; i < elements.size(); i++) {
+                // 选择到元素
+                Element last = elements.get(i);
+                // 选择到table
+                Elements trs = last.select("table").select("tr");
+                int column = trs.size();
+                if (column == 0) {
+                    return -1;
                 }
-                try {
-                    csvWriter.writeRecord(values);
-                    csvWriter.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                System.out.println(column + "    ..........");
+                String filePathAndName;
+                // <2的 column > 2 && TODO：这个规则不大好，没有定论(2 以及大于11的，需要继续清理)
+                if (column < 6 || column > 11) {
+                    filePathAndName = sizeParentPath + "/" + spuCode + "_size_" + column + "_" + i + ".csv";
+                    writeCsvFile(column, filePathAndName, trs);
+                } else {
+                    filePathAndName = tryParentPath + "/" + spuCode + "_try_" + column + "_" + i + ".csv";
+                    writeCsvFile(column, filePathAndName, trs);
                 }
-            }
-            csvWriter.close();
-            try {
-                String s = spuCode + "\r\n";
-                fileOutputStream.write(s.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         } else {
-            LOGGER.warn("{}\t{}\t{}", spuCode, url, status);
+            LOGGER.warn("{}\t{}", spuCode, url);
         }
         return 0;
     }
 
+    public void writeCsvFile(int column, String filePath, Elements trs) {
+        // 创建CSV写对象
+        CsvWriter csvWriter = new CsvWriter(filePath, ',', Charset.forName("UTF-8"));
+        // 获取tr
+        for (int i = 0; i < column; i++) {
+            System.out.println("这是第 +++++++++  " + (i + 1) + "行数据。");
+            //获取每一行的列
+            Elements tds = trs.get(i).select("td");
+            String[] values = new String[tds.size()];
+            for (int j = 0; j < tds.size(); j++) {
+                //获取第i行第j列的值
+                String val = tds.get(j).text();
+                // 多尺码，比如M\\s,所以用的制表符隔开
+                values[j] = val.replaceAll("\\\\", " ").trim();
+            }
+            try {
+                csvWriter.writeRecord(values);
+                csvWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        csvWriter.close();
+    }
+
+    // 下载完写入失败成功文件
+
     public static void main(String[] args) {
-        SizeChartImpl sizeChart = new SizeChartImpl();
-        sizeChart.downloadSizeChart();
+//        SizeChartImpl sizeChart = new SizeChartImpl();
+//        sizeChart.downloadSizeChart();
+//        Set<String> sizeLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc() + "size_2018-08-07.json","json");
+        Set<String> tryLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "json");
+        String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_2018-08-13.txt";
+        Set<String> spuOnline = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu, "txt");
+        spuOnline.retainAll(tryLocal);
+        System.out.println("尺码占比：" + spuOnline.size());
     }
 }

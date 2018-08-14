@@ -27,7 +27,7 @@ public class GetAllimgsUrlImplTest {
     @Test
     public void testGetAllImgsUrlFromApi() throws Exception {
         GetAllimgsUrlImpl getAllimgsUrl = new GetAllimgsUrlImpl();
-        getAllimgsUrl.getAllImgsUrlFromApi();
+//        getAllimgsUrl.getAllImgsUrlFromApi();
     }
 
 

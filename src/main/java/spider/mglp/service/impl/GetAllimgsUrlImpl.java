@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spider.mglp.enums.SqlEnum;
+import spider.mglp.enums.UrlEnum;
 import spider.mglp.pojo.ProductSpuWithBLOBs;
 import spider.mglp.service.GetAllImgsUrl;
 import spider.mglp.util.ReadThisTimeSpuCodeFile;
@@ -14,6 +15,7 @@ import spider.mglp.util.SpiderHeader;
 import spider.mglp.util.SqlUtils;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +23,7 @@ import java.util.regex.Pattern;
 /**
  * <p>pakage: spider.mglp.service.impl,descirption:</p>
  *
+ * 优先级：2
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/7/14 上午9:25</pre>
@@ -30,19 +33,19 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetAllimgsUrlImpl.class);
 
     @Override
-    public void getAllImgsUrlFromApi() {
+    public void getAllImgsUrlFromApi(String localDate) {
         // 查询数据库（手动录入的库），获取itemId——链接 数据
         HashMap<String, String> itemIdLinkMap = SqlUtils.getItemIdAndImgsUrl();
         // 读取磁盘文件，今日所有在架状态的spu
+        String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_" + localDate + ".txt";
         HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink();
-        System.out.println("本地所有spucode数量" + spuIDMap.size());
-        // 只留下本次需要找图像链接的, "/Users/wanghai/Desktop/spucode.txt"
+        // 在今天看来，还没有爬取的图像
         spuIDMap = GetAllimgsUrlImpl.filtrationSpuCode(spuIDMap, "/Users/wanghai/Desktop/spucode_remain_20180720.txt");
 
         System.out.println(spuIDMap.size());
         ArrayList<ProductSpuWithBLOBs> records = new ArrayList<>(256);
         for (Map.Entry<String, String> entry : spuIDMap.entrySet()) {
-            // 从taobao_link获得itemId————————https://item.taobao.com/item.htm?id=568944784760&amp;amp;spm=2014.12440355.0.0
+            // 从taobao_link获得itemId————————https ://item.taobao.com/item.htm?id=568944784760&amp;amp;spm=2014.12440355.0.0
             int begin = entry.getValue().lastIndexOf("id=") + 3;
             String itemId = entry.getValue().substring(begin, begin + 12);
             /*
@@ -119,9 +122,9 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
         SqlUtils.updateImgsUrlByBatch(SqlEnum.BATCH_UPDATE_IMGS_URL.getDesc(), records);
     }
 
-    // 仅仅留下我们本次需要下载的spucode
-    public static HashMap<String, String> filtrationSpuCode(HashMap<String, String> spuIDMap, String thisTimeSpuPath) {
-        Set<String> spuSetThisTime = ReadThisTimeSpuCodeFile.readSpuFile(thisTimeSpuPath);
+    // 仅仅留下我们本次需要找图像url的spucode
+    public static HashMap<String, String> filtrationSpuCode(HashMap<String, String> spuIDMap, String todaySpu) {
+        Set<String> spuSetThisTime = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu,"txt");
         // 删除不要的code
         for (Iterator<Map.Entry<String, String>> it = spuIDMap.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry entry = it.next();
@@ -135,6 +138,6 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
 
     public static void main(String[] args) {
         GetAllimgsUrlImpl a = new GetAllimgsUrlImpl();
-        a.getAllImgsUrlFromApi();
+//        a.getAllImgsUrlFromApi();
     }
 }

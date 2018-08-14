@@ -3,14 +3,18 @@ package spider.mglp.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spider.mglp.enums.SqlEnum;
+import spider.mglp.enums.UrlEnum;
 import spider.mglp.service.DownloadImgs;
+import spider.mglp.util.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SqlUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>pakage: spider.mglp.service.impl,descirption:</p>
@@ -87,15 +91,35 @@ public class DownloadImgsImpl implements DownloadImgs {
             }
             // 该SPU_code下载完毕，更新数据库
             SqlUtils.setDownloaded(flag, spuCode);
+            // 把这个save传入writeThisTimeDownloadedImgsSpu，写磁盘，追加
         }
+    }
+
+    public void writeThisTimeDownloadedImgsSpu(String savePath) throws IOException {
+        Set<String> spuDownloaded = ReadThisTimeSpuCodeFile.countSpuFileLocal(savePath);
+        String fileName = UrlEnum.SPU_DOWNLOADED_IMGS.getDesc() + "spu_downloaded.txt";
+        FileWriter fileWriter;
+        fileWriter = new FileWriter(new File(fileName),true);
+        for (String spu : spuDownloaded) {
+            fileWriter.write(spu);
+            fileWriter.write("\n");
+        }
+        fileWriter.flush();
+        fileWriter.close();
     }
 
     public static void main(String[] args) {
         DownloadImgsImpl downloadImgs = new DownloadImgsImpl();
-        String savePath = "/Users/wanghai/IdeaProjects/img_20/";
-        // TODO: 每次更新 flag
+//        String savePath = "/Users/wanghai/IdeaProjects/img_20/";
+//        // TODO: 每次更新 flag
+//        try {
+//            downloadImgs.downloadImgAndNamed(2, savePath);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        String savePath = UrlEnum.FILES_DOWNLOADED_IMGS.getDesc() + "2018-07-20";
         try {
-            downloadImgs.downloadImgAndNamed(2, savePath);
+            downloadImgs.writeThisTimeDownloadedImgsSpu(savePath);
         } catch (IOException e) {
             e.printStackTrace();
         }

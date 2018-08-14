@@ -1,12 +1,16 @@
 package spider.mglp.util;
 
+import spider.mglp.enums.UrlEnum;
+
 import java.io.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * <p>pakage: spider.mglp.util</p>
- *
+ * <p>
  * descirption: 获取已经下载/获得的数据的spu，该类下的两个方法往往需要结合使用
  *
  * @author wanghai
@@ -20,7 +24,7 @@ public class ReadThisTimeSpuCodeFile {
      * @param path 该文件的路径
      * @return 该文件spu集合
      */
-    public static Set<String> readSpuFile(String path) {
+    public static Set<String> readSpuFile(String path, String type) {
         Set<String> spuSet = null;
         File file = new File(path);
         try {
@@ -31,16 +35,30 @@ public class ReadThisTimeSpuCodeFile {
                 BufferedReader br = new BufferedReader(read);
                 String txt;
                 // 读取文件，将文件内容放入到set中
-                while ((txt = br.readLine()) != null) {
-                    spuSet.add(txt.split(",")[0]);
+                if (type.equals("txt")) {
+                    while ((txt = br.readLine()) != null) {
+                        spuSet.add(txt.split(",")[0]);
+                    }
+                    br.close();
                 }
-                br.close();
+                if (type.equals("json")) {
+                    while ((txt = br.readLine()) != null) {
+                        spuSet.add(txt.substring(8, 20));
+                    }
+                    br.close();
+                }
+                if (type.equals("other")) {
+                    while ((txt = br.readLine()) != null) {
+                        spuSet.add(txt);
+                    }
+                    br.close();
+                }
             }
             read.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("spuSet size:  " + spuSet.size());
+        System.out.println(path + "  spuSet size:  " + spuSet.size());
         return spuSet;
     }
 
@@ -48,16 +66,18 @@ public class ReadThisTimeSpuCodeFile {
      * 读取指定文件夹中所有文件的spu，这些文件已spu开头命名，比如爬取的尺码csv、试穿csv
      *
      * @param path 该文件夹的路径
-     * @return 该文件夹中所有文件的spu集合
+     * @return 该文件夹中所有文件的spu集合  nullable
      */
-    public static HashSet<String> countSpuFileLocal(String path) {
-        HashSet<String> spuSetLocal = new HashSet<>();
 
+    public static Set<String> countSpuFileLocal(String path) {
+        Set<String> spuSetLocal;
         // 读取文件spucode过滤
-
         File files = new File(path);
         File[] fs = files.listFiles();    //遍历path下的文件和目录，放在File数组中
-        assert fs != null;
+        if (fs == null) {
+            return null;
+        }
+        spuSetLocal = new HashSet<>();
         for (File f : fs) {
             // 若非目录(即文件)  去掉.开头的隐藏文件
             if (!f.isDirectory() && !f.isHidden()) {
@@ -67,12 +87,34 @@ public class ReadThisTimeSpuCodeFile {
 
             }
         }
-        System.out.println("spuSet size:  " + spuSetLocal.size());
+        System.out.println(path + "  下的spu:  " + spuSetLocal.size());
         return spuSetLocal;
     }
 
+    public static Map<String, String> readSpuEveryday(String localDate) {
+        String todaySpuFile = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_" + localDate + ".txt";
+        Map<String, String> spuMapToday = null;
+        File file = new File(todaySpuFile);
+        try {
+            InputStreamReader read = new InputStreamReader(new FileInputStream(file));
+            if (file.isFile()) {
+                spuMapToday = new HashMap<>();
+                BufferedReader br = new BufferedReader(read);
+                String txt;
+                while ((txt = br.readLine()) != null) {
+                    String[] values = txt.split(",");
+                    spuMapToday.put(values[0], values[1]);
+                }
+                br.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return spuMapToday;
+    }
+
     public static void main(String[] args) throws IOException {
-        HashSet<String> setlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/Shared/size_chart");
+        Set<String> setlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/Shared/size_chart");
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("/Users/Shared/size_chart/spu/spidered.txt")));
         for (String s : setlocal) {
             bufferedWriter.write(s);

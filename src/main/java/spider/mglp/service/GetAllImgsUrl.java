@@ -11,5 +11,5 @@ import java.io.IOException;
  * @since <pre>2018/7/14 上午9:24</pre>
  */
 public interface GetAllImgsUrl {
-    void getAllImgsUrlFromApi();
+    void getAllImgsUrlFromApi(String localDate);
 }

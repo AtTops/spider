@@ -21,6 +21,7 @@ import spider.mglp.util.SqlUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>pakage: spider.mglp.service.impl</p>
@@ -41,7 +42,7 @@ public class UpdateImage {
         // 获取已经上传了的spu_code(upload_flag为'1' 过滤)
         HashSet<String> hashSetUploded = SqlUtils.getUploadedSpu();
         // 获取所有本次需要上传的spu_code
-        HashSet<String> hashSet = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/wanghai/Downloads/to_upload/0");
+        Set<String> hashSet = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/wanghai/Downloads/to_upload/0");
         hashSet.removeAll(hashSetUploded);
         System.out.println("本次预计上传总数（spu）:\t" + hashSet.size());
         int uploadedImgCount = 0;

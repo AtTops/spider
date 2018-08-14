@@ -25,7 +25,7 @@ public class ColorSpucode {
         // 获取（spu，color）map
         hashMap = SqlUtils.getSpuCodeAndColor();
 
-        Set<String> spuSet = ReadThisTimeSpuCodeFile.readSpuFile("/Users/wanghai/Desktop/spucode.txt");
+        Set<String> spuSet = ReadThisTimeSpuCodeFile.readSpuFile("/Users/wanghai/Desktop/spucode.txt","txt");
 
         System.out.println("线上的spucode 有\t" + hashMap.size());
         System.out.println("云棚给的 有\t" + spuSet.size());
