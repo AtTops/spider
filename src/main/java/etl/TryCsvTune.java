@@ -1,4 +1,4 @@
-package spider.mglp.util;
+package etl;
 
 import org.joda.time.LocalDate;
 
@@ -13,7 +13,7 @@ import java.io.*;
  * @version V1.0
  * @since <pre>2018/8/8 下午4:46</pre>
  */
-public class TruCsvTune {
+public class TryCsvTune {
     // 原始拼接生成
     private static final String PATH_READ = "/Users/wanghai/shendeng_back/try_nochange_2018-08-09.json";
     // 原始修改为7列
@@ -189,6 +189,6 @@ public class TruCsvTune {
 
     public static void main(String[] args) throws IOException {
         LocalDate localDate = LocalDate.now();
-        TruCsvTune.formatKg(localDate);
+        TryCsvTune.formatKg(localDate);
     }
 }

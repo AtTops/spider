@@ -2,17 +2,15 @@ package spider.mglp.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spider.mglp.enums.SqlEnum;
 import spider.mglp.enums.UrlEnum;
 import spider.mglp.service.DownloadImgs;
-import spider.mglp.util.ReadThisTimeSpuCodeFile;
+import etl.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SqlUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

@@ -8,7 +8,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spider.mglp.enums.UrlEnum;
-import spider.mglp.util.ReadThisTimeSpuCodeFile;
+import etl.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SqlUtils;
 
 import java.io.*;

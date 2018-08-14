@@ -1,4 +1,4 @@
-package spider.mglp.util;
+package etl;
 
 import java.io.*;
 
@@ -42,10 +42,10 @@ public class CsvToJson {
                             continue;
                         }
                         String[] values = txt.split(",");
-                        builder.append("{\"spu\":\"" + spucode + "\",");
+                        builder.append("{\"spu\":\"").append(spucode).append("\",");
                         for (int i = 0; i < headers.length; i++) {
                             try {
-                                builder.append("\"" + headers[i] + "\":\"" + values[i] + "\",");
+                                builder.append("\"").append(headers[i]).append("\":\"").append(values[i]).append("\",");
 
                             }catch (ArrayIndexOutOfBoundsException e){
                                 System.out.println(startName);

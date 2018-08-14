@@ -10,12 +10,11 @@ import spider.mglp.enums.SqlEnum;
 import spider.mglp.enums.UrlEnum;
 import spider.mglp.pojo.ProductSpuWithBLOBs;
 import spider.mglp.service.GetAllImgsUrl;
-import spider.mglp.util.ReadThisTimeSpuCodeFile;
+import etl.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SpiderHeader;
 import spider.mglp.util.SqlUtils;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

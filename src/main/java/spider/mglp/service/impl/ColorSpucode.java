@@ -1,6 +1,6 @@
 package spider.mglp.service.impl;
 
-import spider.mglp.util.ReadThisTimeSpuCodeFile;
+import etl.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SqlUtils;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package spider.mglp.util;
+package etl;
 
 import spider.mglp.enums.UrlEnum;
 
