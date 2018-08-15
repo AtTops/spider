@@ -225,14 +225,17 @@ public class SizeChartImpl {
     // 下载完写入失败成功文件
 
     public static void main(String[] args) throws IOException {
-        String localDate = LocalDate.now().toString();
+        String localDate = LocalDate.now().minusDays(1).toString();
 
 //        SizeChartImpl sizeChart = new SizeChartImpl();
 //        sizeChart.downloadSizeChart();
+
+        Set<String> sss = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.JSON_TRY_SUCCESS_ADJUST.getDesc() + "try_" + localDate + ".json","json");
         Set<String> sizeLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "other");
-        //Set<String> tryLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "other");
+        Set<String> tryDownloaded = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "other");
         String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_2018-08-15.txt";
         Set<String> spuOnline = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu, "txt");
+//        spuOnline.retainAll(sizeLocal);
         spuOnline.retainAll(sizeLocal);
         System.out.println("尺码占比：" + spuOnline.size());
     }

@@ -29,7 +29,7 @@ public class SizeCsvToJson {
             if (!f.isDirectory() && !f.isHidden()) {
                 String fileName = f.getName();
                 String spucode = fileName.substring(0, 12);
-                if (!sizeYesterday.contains(spucode)) { // 已经
+                if (!sizeYesterday.contains(spucode)) { // 线上已经有了
                     try {
                         // 创建CSV读对象
                         InputStreamReader read = new InputStreamReader(new FileInputStream(f), "utf-8");

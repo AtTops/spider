@@ -72,17 +72,28 @@ public class Pipline {
         // 6、上传测试环境
 
         // 7、处理不合法try
+//        try {
+//            illegalCsv.disposeTry("2018-08-14");
+//        } catch (IOException e) {
+//            LOGGER.error("处理不合法try出了些问题！");
+//            LOGGER.error(e.getMessage());
+//        }
+        // 8、判断try是横向还是纵向，纵向转置，
+//        try {
+//            illegalCsv.whichNeedTranspose("2018-08-14");
+//        } catch (IOException e) {
+//            LOGGER.error("try转置出了写问题！");
+//            LOGGER.error(e.getMessage());
+//        }
+        // 8、try处理为原始json TODO：待整理
+        // 9、try处理为前端需要的形式 TODO：待整理
+//         10、try更新downloaded.txt
         try {
-            illegalCsv.disposeTry("2018-08-14");
+            UpdateDownloaded.updateDownloaded("try", localDate);
         } catch (IOException e) {
-            LOGGER.error("处理不合法try出了写问题！");
+            LOGGER.error("更新size的downloaded.txt出了写问题");
             LOGGER.error(e.getMessage());
         }
-        // 8、判断try是横向还是纵向，纵向转置，
-        // 8、try处理为原始json
-        // 9、try处理为前端需要的形式
-        // 10、try更新downloaded.txt
-
         // 11、计算占比，发邮件
     }
 }

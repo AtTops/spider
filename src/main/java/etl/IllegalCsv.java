@@ -1,9 +1,13 @@
 package etl;
 
+import com.csvreader.CsvWriter;
+import org.jsoup.select.Elements;
 import spider.mglp.enums.UrlEnum;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,6 +77,7 @@ public class IllegalCsv {
 
     /**
      * 删除不合法的try数据
+     *
      * @param localDate
      * @throws IOException
      */
@@ -134,5 +139,74 @@ public class IllegalCsv {
             str = str.substring(0, str.length() - 1);
         }
         return str;
+    }
+
+    /**
+     * 识别出需要转置的csv文件,调用转置函数转置
+     *
+     * @param localDate
+     * @throws IOException
+     */
+    public void whichNeedTranspose(String localDate) throws IOException {
+        String tryParentFilePath = UrlEnum.CSV_TRY_SUCCESS.getDesc() + localDate;
+        File files = new File(tryParentFilePath);
+        File[] fs = files.listFiles();
+        for (File f : fs) {
+            if (!f.isDirectory() && !f.isHidden()) {
+                String fileName = f.getName();
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
+                String line = bufferedReader.readLine();
+                if (!line.contains("码")) {
+                    // 这些是需要转置的
+                    int column = line.split(",").length;
+                    transposeCsv(f, column, tryParentFilePath);
+                }
+            }
+        }
+    }
+
+    /**
+     * csv转置
+     *
+     * @param file
+     */
+    public void transposeCsv(File file, int column, String tryParentFilePath) throws IOException {
+        String spuCode = file.getName().substring(0, 12);
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        String line;
+        ArrayList<String> arrayList = new ArrayList<>(16);
+        while ((line = bufferedReader.readLine()) != null) {
+            arrayList.add(line);
+        }
+        int row = arrayList.size();
+        bufferedReader.close();
+        file.delete();
+        String[][] matrix = new String[column][row];
+        int transposeColumn = 0;
+        for (String rowValue : arrayList) {
+            int transposeRow = 0;
+            String[] values = rowValue.split(",");
+            for (String str : values){
+                matrix[transposeRow++][transposeColumn] = str;
+            }
+            transposeColumn += 1;
+        }
+        // 创建CSV写对象
+        CsvWriter csvWriter = new CsvWriter(tryParentFilePath + "/" + spuCode + "_try_.csv", ',', Charset.forName("UTF-8"));
+        // 获取tr
+        for (int i = 0; i < column; i++) {
+            csvWriter.writeRecord(matrix[i]);
+        }
+        csvWriter.flush();
+        csvWriter.close();
+    }
+
+    public static void main(String[] args) {
+        IllegalCsv illegalCsv = new IllegalCsv();
+        try {
+            illegalCsv.whichNeedTranspose("2018-08-14");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -15,9 +15,9 @@ import java.io.*;
  */
 public class TryCsvTune {
     // 原始拼接生成
-    private static final String PATH_READ = "/Users/wanghai/shendeng_back/try_nochange_2018-08-09.json";
+    private static final String PATH_READ = "/Users/wanghai/shendeng_back/try_nochange_2018-08-14.json";
     // 原始修改为7列
-    private static final String PATH_WRITE = "/Users/wanghai/try_7fields.json";
+    private static final String PATH_WRITE = "/Users/wanghai/try_2018-08-14-7fields.json";
     // 处理体重
     private static final String PATH_WRITE_2 = "/Users/wanghai/shendeng_back/use_json/try_";
 
@@ -26,8 +26,8 @@ public class TryCsvTune {
      *
      * @throws IOException IOException
      */
-    public static void fields7(LocalDate localDate) throws IOException {
-        InputStreamReader read = new InputStreamReader(new FileInputStream(new File(PATH_READ) + localDate.toString() + ".json"), "utf-8");
+    public static void fields7(String localDate) throws IOException {
+        InputStreamReader read = new InputStreamReader(new FileInputStream(new File(PATH_READ)));
         // 目标文件
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(PATH_WRITE, false));
         BufferedReader br = new BufferedReader(read);
@@ -153,7 +153,7 @@ public class TryCsvTune {
         read.close();
     }
 
-    public static void formatKg(LocalDate localDate) throws IOException {
+    public static void formatKg(String localDate) throws IOException {
         InputStreamReader read = new InputStreamReader(new FileInputStream(new File(PATH_WRITE)), "utf-8");
         // 目标文件
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(PATH_WRITE_2 + localDate.toString() + ".json", false));
@@ -170,7 +170,7 @@ public class TryCsvTune {
             if (!weight.contains("Kg") && !weight.contains("kg") && !weight.contains("KG") && !weight.contains("kG")) {
                 try {
                     int weightInt = Integer.parseInt(weight);
-                    values[3] = weightInt > 60 ? "\"体重\":\"" + weightInt / 2 + "kg\"" : "\"体重\":\"" + weight + "kg\"";
+                    values[3] = weightInt > 65 ? "\"体重\":\"" + weightInt / 2 + "kg\"" : "\"体重\":\"" + weight + "kg\"";
                 } catch (NumberFormatException e) {
                     // TODO：打log
 //                    System.out.println(weight + "转换失败");
@@ -189,6 +189,7 @@ public class TryCsvTune {
 
     public static void main(String[] args) throws IOException {
         LocalDate localDate = LocalDate.now();
-        TryCsvTune.formatKg(localDate);
+        TryCsvTune.fields7("2018-08-14");
+        TryCsvTune.formatKg("2018-08-14");
     }
 }
