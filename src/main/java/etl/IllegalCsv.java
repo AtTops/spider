@@ -20,8 +20,13 @@ public class IllegalCsv {
     private static final String[] SIZE_HEADER = {"尺", "s", "S"};
     private static final String[] SIZE_BODY = {"XS", "S", "M", "L", "xs", "s", "m", "l"};
 
+    /**
+     * 处理size中的不合法数据
+     * @param localDate
+     * @throws IOException
+     */
     public void disposeSize(String localDate) throws IOException {
-        String sizeParentFilePath = UrlEnum.FILES_SIZE_SUCCESS.getDesc() + localDate;
+        String sizeParentFilePath = UrlEnum.CSV_SIZE_SUCCESS.getDesc() + localDate;
         String sizeResultFilePath = sizeParentFilePath + "/";
         File files = new File(sizeParentFilePath);
         File[] fs = files.listFiles();    //遍历path下的文件和目录，放在File数组中

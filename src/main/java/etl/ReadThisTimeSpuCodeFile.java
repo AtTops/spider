@@ -24,40 +24,35 @@ public class ReadThisTimeSpuCodeFile {
      * @param path 该文件的路径
      * @return 该文件spu集合
      */
-    public static Set<String> readSpuFile(String path, String type) {
+    public static Set<String> readSpuFile(String path, String type) throws IOException {
         Set<String> spuSet = null;
         File file = new File(path);
-        try {
-            InputStreamReader read = new InputStreamReader(new FileInputStream(
-                    file), "utf-8");
-            if (file.isFile() && file.exists()) {
-                spuSet = new HashSet<>();
-                BufferedReader br = new BufferedReader(read);
-                String txt;
-                // 读取文件，将文件内容放入到set中
-                if (type.equals("txt")) {
-                    while ((txt = br.readLine()) != null) {
-                        spuSet.add(txt.split(",")[0]);
-                    }
-                    br.close();
+        InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");
+        if (file.isFile() && file.exists()) {
+            spuSet = new HashSet<>();
+            BufferedReader br = new BufferedReader(read);
+            String txt;
+            // 读取文件，将文件内容放入到set中
+            if (type.equals("txt")) {
+                while ((txt = br.readLine()) != null) {
+                    spuSet.add(txt.split(",")[0]);
                 }
-                if (type.equals("json")) {
-                    while ((txt = br.readLine()) != null) {
-                        spuSet.add(txt.substring(8, 20));
-                    }
-                    br.close();
-                }
-                if (type.equals("other")) {
-                    while ((txt = br.readLine()) != null) {
-                        spuSet.add(txt);
-                    }
-                    br.close();
-                }
+                br.close();
             }
-            read.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (type.equals("json")) {
+                while ((txt = br.readLine()) != null) {
+                    spuSet.add(txt.substring(8, 20));
+                }
+                br.close();
+            }
+            if (type.equals("other")) {
+                while ((txt = br.readLine()) != null) {
+                    spuSet.add(txt);
+                }
+                br.close();
+            }
         }
+        read.close();
         System.out.println(path + "  spuSet size:  " + spuSet.size());
         return spuSet;
     }

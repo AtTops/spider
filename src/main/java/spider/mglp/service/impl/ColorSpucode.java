@@ -4,6 +4,7 @@ import etl.ReadThisTimeSpuCodeFile;
 import spider.mglp.util.SqlUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -25,7 +26,12 @@ public class ColorSpucode {
         // 获取（spu，color）map
         hashMap = SqlUtils.getSpuCodeAndColor();
 
-        Set<String> spuSet = ReadThisTimeSpuCodeFile.readSpuFile("/Users/wanghai/Desktop/spucode.txt","txt");
+        Set<String> spuSet = null;
+        try {
+            spuSet = ReadThisTimeSpuCodeFile.readSpuFile("/Users/wanghai/Desktop/spucode.txt","txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("线上的spucode 有\t" + hashMap.size());
         System.out.println("云棚给的 有\t" + spuSet.size());

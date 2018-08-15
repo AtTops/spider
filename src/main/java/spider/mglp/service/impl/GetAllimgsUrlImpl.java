@@ -123,7 +123,13 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
 
     // 仅仅留下我们本次需要找图像url的spucode
     public static HashMap<String, String> filtrationSpuCode(HashMap<String, String> spuIDMap, String todaySpu) {
-        Set<String> spuSetThisTime = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu,"txt");
+        Set<String> spuSetThisTime = null;
+        try {
+            spuSetThisTime = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu,"txt");
+        } catch (IOException e) {
+            LOGGER.error("GetAllimgsUrlImpl,仅仅留下我们本次需要找图像url的spucode");
+            LOGGER.error(e.getMessage());
+        }
         // 删除不要的code
         for (Iterator<Map.Entry<String, String>> it = spuIDMap.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry entry = it.next();

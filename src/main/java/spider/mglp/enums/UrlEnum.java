@@ -28,10 +28,14 @@ public enum UrlEnum {
     SPU_TRY_SUCCESS("/Users/wanghai/spider/try/spu/success/try_downloaded.txt", 9),
     // 需要人工添加链接，每日重写，不记录历史
     SPU_NEED_ADD_BYHAND("/Users/wanghai/spider/need_add_byhand.txt", 10),
-    // 已经爬取尺码的SPU，追加
-    FILES_SIZE_SUCCESS("/Users/wanghai/spider/size/files/csv/", 11),
-    // 已经爬取试穿的SPU，追加
-    FILES_TRY_SUCCESS("/Users/wanghai/spider/try/files/csv/", 12),
+    CSV_SIZE_SUCCESS("/Users/wanghai/spider/size/files/csv/", 11),
+    CSV_TRY_SUCCESS("/Users/wanghai/spider/try/files/csv/", 12),
+    // 尺码csv转为json的路径
+    JSON_SIZE_SUCCESS_ADJUST("/Users/wanghai/spider/size/files/json/adjust/", 13),
+    // 试穿csv转为json的路径
+    JSON_TRY_SUCCESS("/Users/wanghai/spider/try/files/json/original/", 14),
+    // 调整为线上需求的json格式的存储路径
+    JSON_TRY_SUCCESS_ADJUST("/Users/wanghai/spider/try/files/json/adjust/", 15),
     BASIC_OUTFILE_PATH("/Users/Shared/", 19);
 
     private int type;

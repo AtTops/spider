@@ -14,6 +14,7 @@ import spider.mglp.util.SqlUtils;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -39,16 +40,15 @@ public class SizeChartImpl {
         // 3、读取截至前一天已经下载的spu集合
         Set<String> yesterday;
         // 爬取的数据放置的日期目录
-        String sizeParentFilePath = UrlEnum.FILES_SIZE_SUCCESS.getDesc() + localDate;
-        String tryParentFilePath = UrlEnum.FILES_TRY_SUCCESS.getDesc() + localDate;
+        String sizeParentFilePath = UrlEnum.CSV_SIZE_SUCCESS.getDesc() + localDate;
+        String tryParentFilePath = UrlEnum.CSV_TRY_SUCCESS.getDesc() + localDate;
         // 本次主要想爬取的类型（size\try）的存储路径
         String mainFilePath;
         if (type.equals("size")) {
-            // TODO:json写逻辑spu落地对应_downloaded.txt还没有做
-            yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "json");
+            yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "other");
             mainFilePath = sizeParentFilePath;
         } else {
-            yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "json");
+            yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "other");
             mainFilePath = tryParentFilePath;
         }
         // 目录只创建一次
@@ -155,18 +155,6 @@ public class SizeChartImpl {
             e.printStackTrace();
         }
         doc = Jsoup.parse(html);
-        // 尺码表和试穿表,第一波，很多只有size
-        //Elements elementsSize = doc.select("div.sizeTable"); //
-//                Elements elementsTry = doc.select("div.tryTable"); //
-        // 第二波，解决更多的试穿
-        //Elements elementsTry2 = doc.select("div.screenshot.png.section");
-        // 第三波，早安樊樊，https://item.taobao.com/item.htm?id=569167254509
-        // Elements elementsTry = doc.select("div.tac.size2.tablet"); //
-        // 第四波，小狍   https://item.taobao.com/item.htm?id=561996761230
-//                Elements elementsTry = doc.select("div.tablet.trytab");  //
-        // 第五波，十元诗苑   https://item.taobao.com/item.htm?id=566108943940
-//                Elements elementsTry = doc.select("div.screenshot.section.chrome.png.tac");
-//        return doc.select("div.screenshot.section.png");
         return doc.select(rule);
     }
 
@@ -237,13 +225,18 @@ public class SizeChartImpl {
     // 下载完写入失败成功文件
 
     public static void main(String[] args) {
+        String localDate = LocalDate.now().toString();
+
 //        SizeChartImpl sizeChart = new SizeChartImpl();
 //        sizeChart.downloadSizeChart();
 //        Set<String> sizeLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc() + "size_2018-08-07.json","json");
-        Set<String> tryLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "json");
-        String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_2018-08-13.txt";
-        Set<String> spuOnline = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu, "txt");
-        spuOnline.retainAll(tryLocal);
-        System.out.println("尺码占比：" + spuOnline.size());
+//        Set<String> tryLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "json");
+//        Set<String> tryLocal2 = ReadThisTimeSpuCodeFile.countSpuFileLocal(UrlEnum.CSV_SIZE_SUCCESS.getDesc() + localDate);
+//        String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_2018-08-14.txt";
+//        Set<String> spuOnline = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu, "txt");
+//        tryLocal.addAll(tryLocal2);
+//        System.out.println(tryLocal.size());
+//        spuOnline.retainAll(tryLocal);
+//        System.out.println("尺码占比：" + spuOnline.size());
     }
 }
