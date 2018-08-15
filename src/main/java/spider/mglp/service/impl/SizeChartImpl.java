@@ -224,19 +224,16 @@ public class SizeChartImpl {
 
     // 下载完写入失败成功文件
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String localDate = LocalDate.now().toString();
 
 //        SizeChartImpl sizeChart = new SizeChartImpl();
 //        sizeChart.downloadSizeChart();
-//        Set<String> sizeLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc() + "size_2018-08-07.json","json");
-//        Set<String> tryLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "json");
-//        Set<String> tryLocal2 = ReadThisTimeSpuCodeFile.countSpuFileLocal(UrlEnum.CSV_SIZE_SUCCESS.getDesc() + localDate);
-//        String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_2018-08-14.txt";
-//        Set<String> spuOnline = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu, "txt");
-//        tryLocal.addAll(tryLocal2);
-//        System.out.println(tryLocal.size());
-//        spuOnline.retainAll(tryLocal);
-//        System.out.println("尺码占比：" + spuOnline.size());
+        Set<String> sizeLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "other");
+        //Set<String> tryLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "other");
+        String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_2018-08-15.txt";
+        Set<String> spuOnline = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu, "txt");
+        spuOnline.retainAll(sizeLocal);
+        System.out.println("尺码占比：" + spuOnline.size());
     }
 }

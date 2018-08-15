@@ -19,9 +19,12 @@ import java.util.Set;
 public class IllegalCsv {
     private static final String[] SIZE_HEADER = {"尺", "s", "S"};
     private static final String[] SIZE_BODY = {"XS", "S", "M", "L", "xs", "s", "m", "l"};
+    private static final String[] TRY_HEADER = {"试穿者", "试穿人"};
+    private static final String[] TRY_BODY = {"XS", "S", "M", "L", "xs", "s", "m", "l"};
 
     /**
      * 处理size中的不合法数据
+     *
      * @param localDate
      * @throws IOException
      */
@@ -58,10 +61,59 @@ public class IllegalCsv {
                     } else break;
                 }
                 if (fileWriter != null) {
+                    f.delete();
+                    fileWriter.close();
+                } else if (!findFlag) {
+                    f.delete();
+                    System.out.println(fileName);
+                }
+            }
+        }
+    }
+
+    /**
+     * 删除不合法的try数据
+     * @param localDate
+     * @throws IOException
+     */
+    public void disposeTry(String localDate) throws IOException {
+        String sizeParentFilePath = UrlEnum.CSV_TRY_SUCCESS.getDesc() + localDate;
+        String sizeResultFilePath = sizeParentFilePath + "/";
+        File files = new File(sizeParentFilePath);
+        File[] fs = files.listFiles();    //遍历path下的文件和目录，放在File数组中
+        for (File f : fs) {
+            // 若非目录(即文件)  去掉.开头的隐藏文件
+            if (!f.isDirectory() && !f.isHidden()) {
+                String fileName = f.getName();
+                String spucode = fileName.substring(0, 12);
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
+                String line;
+                boolean findFlag = false;
+                FileWriter fileWriter = null;
+                while ((line = bufferedReader.readLine()) != null) {
+                    // 直到匹配到尺码表正确的开始行
+                    String firstValue = line.split(",")[0];
+                    if (!findFlag) {
+                        if (!myContains(firstValue, TRY_HEADER)) {
+                            // do nothing , next loop
+                        } else {
+                            fileWriter = new FileWriter(new File(sizeResultFilePath + spucode + "_try.csv"));
+                            fileWriter.write(deleteRedundancyCommon(line));
+                            fileWriter.write("\n");
+                            findFlag = true;
+                        }
+                    }// 找到并写入尺码表正确开始的那一行后，需要继续写入尺码信息，并抛弃 不是尺码信息的数据
+                    else {
+                        fileWriter.write(deleteRedundancyCommon(line));
+                        fileWriter.write("\n");
+                    }
+                }
+                if (fileWriter != null) {
                     fileWriter.close();
                     // 删除原文
                     f.delete();
-                } else {
+                } else if (!findFlag) {
+                    f.delete();
                     System.out.println(fileName);
                 }
             }
@@ -82,15 +134,5 @@ public class IllegalCsv {
             str = str.substring(0, str.length() - 1);
         }
         return str;
-    }
-
-    public static void main(String[] args) {
-        String localDate = LocalDate.now().toString();
-        IllegalCsv illegalCsv = new IllegalCsv();
-        try {
-            illegalCsv.disposeSize(localDate);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

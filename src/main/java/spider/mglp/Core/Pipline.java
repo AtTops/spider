@@ -48,7 +48,7 @@ public class Pipline {
 //            LOGGER.error(e.getMessage());
 //        }
 //        // 3、处理不合法size
-//        IllegalCsv illegalCsv = new IllegalCsv();
+        IllegalCsv illegalCsv = new IllegalCsv();
 //        try {
 //            illegalCsv.disposeSize(localDate);
 //        } catch (IOException e) {
@@ -62,16 +62,27 @@ public class Pipline {
 //            LOGGER.error("sizeCsvToJson 出了写问题");
 //            LOGGER.error(e.getMessage());
 //        }
-        // 5、更新size的downloaded.txt
+        // 5、size更新downloaded.txt
+//        try {
+//            UpdateDownloaded.updateDownloaded("size", localDate);
+//        } catch (IOException e) {
+//            LOGGER.error("更新size的downloaded.txt出了写问题");
+//            LOGGER.error(e.getMessage());
+//        }
+        // 6、上传测试环境
+
+        // 7、处理不合法try
         try {
-            UpdateDownloaded.updateDownloaded("try", "2018-08-07");
+            illegalCsv.disposeTry("2018-08-14");
         } catch (IOException e) {
-            LOGGER.error("更新size的downloaded.txt出了写问题");
+            LOGGER.error("处理不合法try出了写问题！");
             LOGGER.error(e.getMessage());
         }
-        // 3、判断try是横向还是纵向，纵向转置
-        // 3、try处理为json
-        // 4、更新downloaded.txt
-        // 5、计算占比，发邮件
+        // 8、判断try是横向还是纵向，纵向转置，
+        // 8、try处理为原始json
+        // 9、try处理为前端需要的形式
+        // 10、try更新downloaded.txt
+
+        // 11、计算占比，发邮件
     }
 }

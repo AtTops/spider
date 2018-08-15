@@ -1,6 +1,7 @@
 package etl;
 
 
+import spider.mglp.enums.UrlEnum;
 import spider.mglp.util.DbFactory;
 
 import java.io.*;
@@ -21,14 +22,17 @@ import java.util.Calendar;
  * @since <pre>2018/8/15 上午11:10</pre>
  */
 public class SizeTryToTestDatabase {
-    public static void main(String[] args) throws IOException {
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    public static void insert(String type, String localDate) throws IOException {
         Calendar cld = Calendar.getInstance();
         Timestamp timeStamp = new Timestamp(cld.getTime().getTime());
-        //System.out.println(dateTime);
-        String type = "size";
+        String jsonFile;
+        if (type.equals("size")) {
+            jsonFile = UrlEnum.JSON_SIZE_SUCCESS_ADJUST.getDesc() + "size_" + localDate + ".json";
+        } else {
+            jsonFile = UrlEnum.JSON_TRY_SUCCESS_ADJUST.getDesc() + "try_" + localDate + ".json";
+        }
         int status = 1;
-        InputStreamReader read = new InputStreamReader(new FileInputStream(new File("/Users/wanghai/spider/size/files/json/adjust/size_2018-08-14.json")));
+        InputStreamReader read = new InputStreamReader(new FileInputStream(new File(jsonFile)));
         BufferedReader br = new BufferedReader(read);
         String line;
         Connection conn = null;
@@ -40,7 +44,6 @@ public class SizeTryToTestDatabase {
                 //String s = "{\"spu\":\"103018156886\",\"尺码\":\"XS码\",\"腰围（腰口）\":\"72\",\"腰围（松紧）\":\"67\",\"臀围\":\"84\",\"脚口/下摆\":\"95\",\"侧长\":\"56\"}";
                 String spu_code = line.substring(8, 20);
                 String content = "{" + line.substring(22);
-                // todo:插入数据库
                 preStmt.setString(1, spu_code);
                 preStmt.setString(2, type);
                 preStmt.setInt(3, status);
@@ -58,8 +61,4 @@ public class SizeTryToTestDatabase {
             DbFactory.closeConnection(conn);
         }
     }
-
-//    public void insert(String spuCode, String type, int status, String content, Timestamp createTime, Timestamp updateTime) {
-//
-//    }
 }
