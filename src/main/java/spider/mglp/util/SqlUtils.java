@@ -68,7 +68,7 @@ public class SqlUtils {
         if (spuCode.length > 0) {
             sql = SqlEnum.SELECT_SPU_TLINK_BY_SPUCODE.getDesc();
         } else {
-            sql = SqlEnum.SELECT_SPU_TLINK.getDesc();
+            sql = SqlEnum.ALL_SPU_TLINK.getDesc();
         }
         // "select spu_code,taobao_link from product_spu_local;"
         try {

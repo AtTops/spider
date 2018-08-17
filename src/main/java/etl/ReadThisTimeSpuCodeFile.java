@@ -28,7 +28,7 @@ public class ReadThisTimeSpuCodeFile {
         Set<String> spuSet = null;
         File file = new File(path);
         InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");
-        if (file.isFile() && file.exists()) {
+        if (file.isFile()) {
             spuSet = new HashSet<>();
             BufferedReader br = new BufferedReader(read);
             String txt;

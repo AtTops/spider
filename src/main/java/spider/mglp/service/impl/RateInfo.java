@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  * <p>pakage: spider.mglp.service.impl</p>
- * <p>
+ *
  * descirption:获取所有的评价信息
  *
  * @author wanghai

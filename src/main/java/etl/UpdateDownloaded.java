@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * <p>pakage: etl</p>
- * <p>
+ *
  * descirption:将今天更新的size与try的json文件更新到downloaded.txt文件
  *
  * @author wanghai

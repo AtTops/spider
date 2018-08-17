@@ -26,13 +26,14 @@ public class Pipline {
     public static void main(String[] args) {
         String localDate = LocalDate.now().toString();
         // 1、今天在架状态的spu，写磁盘，方便之后的数据拿取
-//        SpuEveryday spuEveryday = new SpuEveryday();
-//        try {
-//            spuEveryday.spuTody(localDate);
-//        } catch (IOException e) {
-//            LOGGER.error("获取今天的在架状态SPU并写磁盘出了些问题！");
-//            LOGGER.error(e.getMessage());
-//        }
+        SpuEveryday spuEveryday = new SpuEveryday();
+        try {
+            spuEveryday.spuTody(localDate);
+        } catch (IOException e) {
+            LOGGER.error("获取今天的在架状态SPU并写磁盘出了些问题！");
+            LOGGER.error(e.getMessage());
+        }
+        // TODO:change database
 //        // 2、爬取尺码试穿数据
 //        SizeChartImpl sizeChart = new SizeChartImpl();
 //        String[] sizeRules = {"div.sizeTable", "div.tablet.sizetab", "div.tac.size1.tablet", "div.screenshot.section.png","screenshot.section.png"};
@@ -48,7 +49,7 @@ public class Pipline {
 //            LOGGER.error(e.getMessage());
 //        }
 //        // 3、处理不合法size
-        IllegalCsv illegalCsv = new IllegalCsv();
+//        IllegalCsv illegalCsv = new IllegalCsv();
 //        try {
 //            illegalCsv.disposeSize(localDate);
 //        } catch (IOException e) {
@@ -70,7 +71,7 @@ public class Pipline {
 //            LOGGER.error(e.getMessage());
 //        }
         // 6、上传测试环境
-
+// TODO:change database
         // 7、处理不合法try
 //        try {
 //            illegalCsv.disposeTry("2018-08-14");
@@ -88,12 +89,12 @@ public class Pipline {
         // 8、try处理为原始json TODO：待整理
         // 9、try处理为前端需要的形式 TODO：待整理
 //         10、try更新downloaded.txt
-        try {
-            UpdateDownloaded.updateDownloaded("try", localDate);
-        } catch (IOException e) {
-            LOGGER.error("更新size的downloaded.txt出了写问题");
-            LOGGER.error(e.getMessage());
-        }
+//        try {
+//            UpdateDownloaded.updateDownloaded("try", "2018-08-14");
+//        } catch (IOException e) {
+//            LOGGER.error("更新size的downloaded.txt出了写问题");
+//            LOGGER.error(e.getMessage());
+//        }
         // 11、计算占比，发邮件
     }
 }
