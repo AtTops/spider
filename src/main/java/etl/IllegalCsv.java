@@ -69,7 +69,7 @@ public class IllegalCsv {
                     fileWriter.close();
                 } else if (!findFlag) {
                     f.delete();
-                    System.out.println(fileName);
+                    System.out.println("不合法的size： " + fileName);
                 }
             }
         }
@@ -119,7 +119,7 @@ public class IllegalCsv {
                     f.delete();
                 } else if (!findFlag) {
                     f.delete();
-                    System.out.println(fileName);
+                    System.out.println("不合法的try: " + fileName);
                 }
             }
         }
@@ -160,6 +160,7 @@ public class IllegalCsv {
                     // 这些是需要转置的
                     int column = line.split(",").length;
                     transposeCsv(f, column, tryParentFilePath);
+                    System.out.println("转置： " + fileName);
                 }
             }
         }
@@ -186,7 +187,7 @@ public class IllegalCsv {
         for (String rowValue : arrayList) {
             int transposeRow = 0;
             String[] values = rowValue.split(",");
-            for (String str : values){
+            for (String str : values) {
                 matrix[transposeRow++][transposeColumn] = str;
             }
             transposeColumn += 1;

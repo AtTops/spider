@@ -37,5 +37,6 @@ public class UpdateDownloaded {
         }
         fileWriter.flush();
         fileWriter.close();
+        System.out.println("更新downloaded成功！");
     }
 }

@@ -38,7 +38,7 @@ public class SizeTryToTestDatabase {
         Connection conn = null;
         PreparedStatement preStmt = null;
         try {
-            conn = DbFactory.getConnection();
+            conn = DbFactory.getConnection("sys-config-test.xml");
             preStmt = conn.prepareStatement("insert into spu_size_info(spu_code,type,status,content,create_time,update_time)values(?,?,?,?,?,?)");
             while ((line = br.readLine()) != null) {
                 //String s = "{\"spu\":\"103018156886\",\"尺码\":\"XS码\",\"腰围（腰口）\":\"72\",\"腰围（松紧）\":\"67\",\"臀围\":\"84\",\"脚口/下摆\":\"95\",\"侧长\":\"56\"}";

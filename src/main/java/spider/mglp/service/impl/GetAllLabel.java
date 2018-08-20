@@ -110,8 +110,30 @@ public class GetAllLabel {
         }
         fileWriter.flush();
         fileWriter.close();
+        jsonToCsv(fileName);
         System.out.println("有效数： " + impress);
     }
+
+    public void jsonToCsv(String jsonPath) throws IOException {
+        BufferedReader brd = new BufferedReader(new InputStreamReader(new FileInputStream(jsonPath), Charset.forName("UTF-8")));
+        String cp;
+        FileWriter fileWriter = new FileWriter(new File(jsonPath.substring(0, jsonPath.length() - 3) + "csv"));
+        while ((cp = brd.readLine()) != null) {
+            // {"spu":"103418115495","衣服很舒服":27,"穿着效果好":14,"版型好看":9,"衣服不错":8,"布料好":5,"挺透气的":3,"颜色挺正":3}
+            cp = cp.replaceAll("\"", "");
+            cp = cp.substring(1, cp.length() - 1);
+            String[] fileds = cp.split(",");
+            String spu = fileds[0].substring(4, 16);
+            for (int i = 1; i < fileds.length; i++) {
+                fileWriter.write(spu + "," + fileds[i].split(":")[0] + "," + fileds[i].split(":")[1]);
+                fileWriter.write("\n");
+            }
+        }
+        fileWriter.flush();
+        fileWriter.close();
+        brd.close();
+    }
+
 
     public static void main(String[] args) {
         GetAllLabel getAllLabel = new GetAllLabel();

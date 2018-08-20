@@ -32,12 +32,14 @@ public enum UrlEnum {
     CSV_TRY_SUCCESS("/Users/wanghai/spider/try/files/csv/", 12),
     // 尺码csv转为json的路径
     JSON_SIZE_SUCCESS_ADJUST("/Users/wanghai/spider/size/files/json/adjust/", 13),
-    // 试穿csv转为json的路径
+    // 试穿csv转为json的路径(nochange)
     JSON_TRY_SUCCESS("/Users/wanghai/spider/try/files/json/original/", 14),
     // 调整为线上需求的json格式的存储路径
     JSON_TRY_SUCCESS_ADJUST("/Users/wanghai/spider/try/files/json/adjust/", 15),
     ALL_LABEL_FILE_JSON("/Users/wanghai/spider/label/files/json/original/", 16),
     ADJUST_LABEL_FILE_JSON("/Users/wanghai/spider/label/files/json/adjust/", 17),
+    // try处理为json的中间状态（未处理体重形式），没什么用
+    TRY_PATH_WRITE_TMP("/Users/wanghai/spider/tmp/try_tmp.json", 18),
     BASIC_OUTFILE_PATH("/Users/Shared/", 19);
 
     private int type;

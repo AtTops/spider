@@ -32,6 +32,7 @@ import java.util.Set;
  * @version V1.0
  * @since <pre>2018/7/18 下午5:20</pre>
  */
+@Deprecated
 public class UpdateImage {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateImage.class);
 
@@ -94,7 +95,7 @@ public class UpdateImage {
             } else {
                 String imgs = cdnImgsPath.toString();
                 // 更新本地库
-                SqlUtils.updateOrBackUpLocalCdnImgs(coverPath, imgs.substring(0, imgs.length() - 1), spuCode, "update");
+                //SqlUtils.updateOrBackUpLocalCdnImgs(coverPath, imgs.substring(0, imgs.length() - 1), spuCode, "update");
             }
         }
         LOGGER.info("上传成功的图像有\t{}\t张", uploadedImgCount);

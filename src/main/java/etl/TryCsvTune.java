@@ -1,25 +1,21 @@
 package etl;
 
 import org.joda.time.LocalDate;
+import spider.mglp.enums.UrlEnum;
 
 import java.io.*;
 
 /**
  * <p>pakage: spider.mglp.util</p>
  * <p>
- * descirption:将试穿表调整为前端期望的形式,  可以与CsvToJson.java衔接，形成pipline
+ * descirption:将试穿表调整为前端期望的形式,与CsvToJson.java衔接，形成pipline
  *
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/8/8 下午4:46</pre>
  */
 public class TryCsvTune {
-    // 原始拼接生成
-    private static final String PATH_READ = "/Users/wanghai/shendeng_back/try_nochange_2018-08-14.json";
-    // 原始修改为7列
-    private static final String PATH_WRITE = "/Users/wanghai/try_2018-08-14-7fields.json";
-    // 处理体重
-    private static final String PATH_WRITE_2 = "/Users/wanghai/shendeng_back/use_json/try_";
+    private static String TRY_PATH_WRITE_TMP = UrlEnum.TRY_PATH_WRITE_TMP.getDesc();
 
     /**
      * 处理数据为期望的7个列，未处理体重格式化
@@ -27,12 +23,13 @@ public class TryCsvTune {
      * @throws IOException IOException
      */
     public static void fields7(String localDate) throws IOException {
-        InputStreamReader read = new InputStreamReader(new FileInputStream(new File(PATH_READ)));
+        // 原始拼接生成
+        String pathRead = UrlEnum.JSON_TRY_SUCCESS.getDesc() + "try_nochange_" + localDate + ".json";
+        InputStreamReader read = new InputStreamReader(new FileInputStream(new File(pathRead)));
         // 目标文件
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(PATH_WRITE, false));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(TRY_PATH_WRITE_TMP, false));
         BufferedReader br = new BufferedReader(read);
         String text;
-        int count = 0;
         while ((text = br.readLine()) != null) {
             // 首先，去掉最后的花括号
             text = text.substring(0, text.length() - 1);
@@ -53,7 +50,6 @@ public class TryCsvTune {
                     newValues[2] = ",\"身高\":" + "\"" + cmAndkg[0] + "\"";
                     newValues[3] = ",\"体重\":" + "\"" + cmAndkg[1] + "\"";
                     find = true;
-                    count++;
                     break;
                 }
             }
@@ -146,7 +142,6 @@ public class TryCsvTune {
             bufferedWriter.write(finalValue);
             bufferedWriter.write("\n");
         }
-        System.out.println(count);
         br.close();
         bufferedWriter.flush();
         bufferedWriter.close();
@@ -154,9 +149,11 @@ public class TryCsvTune {
     }
 
     public static void formatKg(String localDate) throws IOException {
-        InputStreamReader read = new InputStreamReader(new FileInputStream(new File(PATH_WRITE)), "utf-8");
-        // 目标文件
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(PATH_WRITE_2 + localDate.toString() + ".json", false));
+        InputStreamReader read = new InputStreamReader(new FileInputStream(new File(TRY_PATH_WRITE_TMP)), "utf-8");
+        // 处理体重
+        String write2 = UrlEnum.JSON_TRY_SUCCESS_ADJUST.getDesc() + "try_" + localDate + ".json";
+
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(write2));
         BufferedReader br = new BufferedReader(read);
         String text;
         while ((text = br.readLine()) != null) {
@@ -185,11 +182,6 @@ public class TryCsvTune {
         }
         bufferedWriter.flush();
         bufferedWriter.close();
-    }
-
-    public static void main(String[] args) throws IOException {
-        LocalDate localDate = LocalDate.now();
-        TryCsvTune.fields7("2018-08-14");
-        TryCsvTune.formatKg("2018-08-14");
+        System.out.println("try json处理完毕！");
     }
 }

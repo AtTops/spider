@@ -43,13 +43,13 @@ public class SizeChartImpl {
         String sizeParentFilePath = UrlEnum.CSV_SIZE_SUCCESS.getDesc() + localDate;
         String tryParentFilePath = UrlEnum.CSV_TRY_SUCCESS.getDesc() + localDate;
         // 本次主要想爬取的类型（size\try）的存储路径
-        String mainFilePath;
+        String todayDownloaded;
         if (type.equals("size")) {
             yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "other");
-            mainFilePath = sizeParentFilePath;
+            todayDownloaded = sizeParentFilePath;
         } else {
             yesterday = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "other");
-            mainFilePath = tryParentFilePath;
+            todayDownloaded = tryParentFilePath;
         }
         // 目录只创建一次
         mkDir(sizeParentFilePath);
@@ -61,7 +61,7 @@ public class SizeChartImpl {
         FileWriter fileWriter = new FileWriter(new File(UrlEnum.SPU_NEED_ADD_BYHAND.getDesc()));
         for (String rule : rules) {
             // 读取截至本次循环，已经下载的，不需要再次下载了
-            Set<String> spidered = ReadThisTimeSpuCodeFile.countSpuFileLocal(mainFilePath);
+            Set<String> spidered = ReadThisTimeSpuCodeFile.countSpuFileLocal(todayDownloaded);
             // 删除之前循环下载了的，避免重复下载
             if (spidered != null) {
                 deleteSpidered(spuIDMap, spidered);
@@ -74,14 +74,14 @@ public class SizeChartImpl {
                 String itemId = entry.getValue().substring(begin, begin + 12);
                 // spuCode用于待会的csv文件名
                 String spuCode = entry.getKey();
-                // 根据该itemId，查询itemIdLinkMap中的value值
+                // 根据该itemId，查询itemIdLinkMap（我们手动录入的数据）中的value值
                 if (itemIdLinkMap.containsKey(itemId)) {
                     go++;
                     System.out.println("go spuCode, " + spuCode + "\t=\t" + itemIdLinkMap.get(itemId));
                     String url = itemIdLinkMap.get(itemId);
                     // 获取数据中elements
                     Elements elements = spiderFromUrl(url, rule);
-                    // 解析数据并写磁盘，csv TODO：变长确定是否是试穿表第二轮数据获取
+                    // 解析数据并写磁盘，csv
                     parseData(elements, spuCode, sizeParentFilePath, url, tryParentFilePath);
                 } else if (writeByHandFlag) {
                     hand++;
@@ -89,6 +89,7 @@ public class SizeChartImpl {
                     fileWriter.write("\n");
                 }
             }
+            // 保证只写一次（hand也只加一轮，所以后面的规则中打印hand  :0）
             writeByHandFlag = false;
             System.out.println("go  :" + go + " , hand  :" + hand);
         }
@@ -107,6 +108,7 @@ public class SizeChartImpl {
             String spuCode = (String) entry.getKey();
             if (spidered.contains(spuCode)) {
                 it.remove();
+                System.out.println("remove spu: " + spuCode);
             }
         }
     }
@@ -182,7 +184,6 @@ public class SizeChartImpl {
                 }
                 System.out.println(column + "    ..........");
                 String filePathAndName;
-                // <2的 column > 2 && TODO：这个规则不大好，没有定论(2 以及大于11的，需要继续清理)
                 if (column < 6 || column > 11) {
                     filePathAndName = sizeParentPath + "/" + spuCode + "_size_" + column + "_" + i + ".csv";
                     writeCsvFile(column, filePathAndName, trs);
