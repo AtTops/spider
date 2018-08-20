@@ -21,6 +21,7 @@ import java.util.Set;
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/8/10 下午2:28</pre>
+ *
  */
 public class SpuEveryday {
     public void spuTody(String localDate) throws IOException {
