@@ -68,6 +68,7 @@ public class SizeChartImpl {
             }
             // go\hand查看还有多少是没有手动添加的
             int go = 0, hand = 0;
+            Set<String> handSet = new HashSet<>(64);
             for (Map.Entry<String, String> entry : spuIDMap.entrySet()) {
                 // 从taobao_link获得itemId————————https://item.taobao.com/item.htm?id=568944784760&amp;amp;spm=2014.12440355.0.0
                 int begin = entry.getValue().lastIndexOf("id=") + 3;
@@ -84,9 +85,12 @@ public class SizeChartImpl {
                     // 解析数据并写磁盘，csv
                     parseData(elements, spuCode, sizeParentFilePath, url, tryParentFilePath);
                 } else if (writeByHandFlag) {
-                    hand++;
-                    fileWriter.write(itemId + "," + entry.getValue());
-                    fileWriter.write("\n");
+                    if (!handSet.contains(itemId)) {
+                        hand++;
+                        handSet.add(itemId);
+                        fileWriter.write(itemId + "," + entry.getValue());
+                        fileWriter.write("\n");
+                    }
                 }
             }
             // 保证只写一次（hand也只加一轮，所以后面的规则中打印hand  :0）
@@ -108,7 +112,7 @@ public class SizeChartImpl {
             String spuCode = (String) entry.getKey();
             if (spidered.contains(spuCode)) {
                 it.remove();
-                System.out.println("remove spu: " + spuCode);
+                System.out.println("已经下载过，remove spu: " + spuCode);
             }
         }
     }
@@ -157,6 +161,7 @@ public class SizeChartImpl {
             e.printStackTrace();
         }
         doc = Jsoup.parse(html);
+        System.out.println("========开始rule:  " + rule);
         return doc.select(rule);
     }
 
@@ -180,7 +185,8 @@ public class SizeChartImpl {
                 Elements trs = last.select("table").select("tr");
                 int column = trs.size();
                 if (column == 0) {
-                    return -1;
+                    System.out.println("下一个，本次无tr");
+                    continue;
                 }
                 System.out.println(column + "    ..........");
                 String filePathAndName;
@@ -221,23 +227,5 @@ public class SizeChartImpl {
             }
         }
         csvWriter.close();
-    }
-
-    // 下载完写入失败成功文件
-
-    public static void main(String[] args) throws IOException {
-        String localDate = LocalDate.now().minusDays(2).toString();
-
-//        SizeChartImpl sizeChart = new SizeChartImpl();
-//        sizeChart.downloadSizeChart();
-
-        //Set<String> sss = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.JSON_TRY_SUCCESS_ADJUST.getDesc() + "try_" + localDate + ".json","json");
-        //Set<String> sizeLocal = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_SIZE_SUCCESS.getDesc(), "other");
-        Set<String> tryDownloaded = ReadThisTimeSpuCodeFile.readSpuFile(UrlEnum.SPU_TRY_SUCCESS.getDesc(), "other");
-        String todaySpu = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_2018-08-16.txt";
-        Set<String> spuOnline = ReadThisTimeSpuCodeFile.readSpuFile(todaySpu, "txt");
-//        spuOnline.retainAll(sizeLocal);
-        spuOnline.retainAll(tryDownloaded);
-        System.out.println("尺码占比：" + spuOnline.size());
     }
 }

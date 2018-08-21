@@ -1,6 +1,7 @@
 package etl;
 
 import spider.mglp.enums.UrlEnum;
+import spider.mglp.util.SqlUtils;
 
 import java.io.*;
 import java.util.HashMap;
@@ -108,13 +109,37 @@ public class ReadThisTimeSpuCodeFile {
         return spuMapToday;
     }
 
+    /**
+     * 报告目前的尺码试穿表数量情况，命中比例等数据
+     * @param localDate
+     * @return
+     * @throws IOException
+     */
+    public static float[][] report(String localDate) throws IOException {
+        float[][] result = new float[2][4];
+        Set<String> sizeDatabase = SqlUtils.getSpuSizeOrTry("test", "size");
+        Set<String> tryDatabase = SqlUtils.getSpuSizeOrTry("test", "try");
+        String todaySpuFile = UrlEnum.SPU_EVERYDAY_PATH.getDesc() + "spu_" + localDate + ".txt";
+        Set<String> onlineSet = readSpuFile(todaySpuFile, "txt");
+        Set<String> onlineSet2 = readSpuFile(todaySpuFile, "txt");
+        int onlineSize = onlineSet.size();
+        result[0][0] = onlineSet.size();
+        result[1][0] = onlineSet2.size();
+        result[0][1] = sizeDatabase.size();
+        result[1][1] = tryDatabase.size();
+        onlineSet.retainAll(sizeDatabase);
+        result[0][2] = onlineSet.size();
+        onlineSet2.retainAll(tryDatabase);
+        result[1][2] = onlineSet2.size();
+        result[0][3] = (float) onlineSet.size() / (float) onlineSize;
+        result[1][3] = (float) onlineSet2.size() / (float) onlineSize;
+        System.out.println("类型   在架数    库中数量    命中/在架数     命中百分比");
+        System.out.println("size   " + (int)result[0][0] + "       " + (int)result[0][1] + "        " + (int)result[0][2] + "/" + (int)result[0][0] + "      " + result[0][3]);
+        System.out.println(" try   " + (int)result[1][0] + "       " + (int)result[1][1] + "        " + (int)result[1][2] + "/" + (int)result[1][0] + "      " + result[1][3]);
+        return result;
+    }
+
     public static void main(String[] args) throws IOException {
-        Set<String> setlocal = ReadThisTimeSpuCodeFile.countSpuFileLocal("/Users/Shared/size_chart");
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("/Users/Shared/size_chart/spu/spidered.txt")));
-        for (String s : setlocal) {
-            bufferedWriter.write(s);
-            bufferedWriter.write("\n");
-        }
-        bufferedWriter.close();
+        ReadThisTimeSpuCodeFile.report("2018-08-21");
     }
 }

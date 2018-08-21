@@ -123,24 +123,32 @@ public class TryCsvTune {
                 newValues[6] = ",\"试穿感受\"" + ":\"?\"}";
             }
             // 试穿尺码和试穿感受在一起的 (试穿尺码及感受) 需要拆开
+            boolean flag = true;
             for (int i = 2; i < values.length; i++) {
-                String value = values[i];
-                int index = values[i].lastIndexOf(":");
-                if (value.substring(0, index).matches("\".*试穿尺码及感受.*\"")) {
-                    String valueTup = value.substring(index);
-                    if (valueTup.contains("/")) {
-                        String[] ss = valueTup.split("/");
-                        newValues[5] = ",\"试穿尺码\"" + ss[0] + "\"";
-                        newValues[6] = ",\"试穿感受\":\"" + ss[1] + "}";
-                    } else {
-                        newValues[5] = ",\"试穿尺码\"" + valueTup.substring(0, 3) + "\"";
-                        newValues[6] = ",\"试穿感受\":\"" + valueTup.substring(3) + "}";
+                try {
+                    String value = values[i];
+                    int index = values[i].lastIndexOf(":");
+                    if (value.substring(0, index).matches("\".*试穿尺码及感受.*\"")) {
+                        String valueTup = value.substring(index);
+                        if (valueTup.contains("/")) {
+                            String[] ss = valueTup.split("/");
+                            newValues[5] = ",\"试穿尺码\"" + ss[0] + "\"";
+                            newValues[6] = ",\"试穿感受\":\"" + ss[1] + "}";
+                        } else {
+                            newValues[5] = ",\"试穿尺码\"" + valueTup.substring(0, 3) + "\"";
+                            newValues[6] = ",\"试穿感受\":\"" + valueTup.substring(3) + "}";
+                        }
                     }
+                } catch (StringIndexOutOfBoundsException e) {
+                    flag = false;
+                    System.out.println("tmp文件数组越界的地方： " + text);
                 }
             }
-            String finalValue = newValues[0] + newValues[1] + newValues[2] + newValues[3] + newValues[4] + newValues[5] + newValues[6];
-            bufferedWriter.write(finalValue);
-            bufferedWriter.write("\n");
+            if (flag) {
+                String finalValue = newValues[0] + newValues[1] + newValues[2] + newValues[3] + newValues[4] + newValues[5] + newValues[6];
+                bufferedWriter.write(finalValue);
+                bufferedWriter.write("\n");
+            }
         }
         br.close();
         bufferedWriter.flush();
@@ -167,7 +175,8 @@ public class TryCsvTune {
             if (!weight.contains("Kg") && !weight.contains("kg") && !weight.contains("KG") && !weight.contains("kG")) {
                 try {
                     int weightInt = Integer.parseInt(weight);
-                    values[3] = weightInt > 65 ? "\"体重\":\"" + weightInt / 2 + "kg\"" : "\"体重\":\"" + weight + "kg\"";
+                    // 大于67的，就认为是斤，除以2，这个阈值，有待商榷
+                    values[3] = weightInt > 67 ? "\"体重\":\"" + weightInt / 2 + "kg\"" : "\"体重\":\"" + weight + "kg\"";
                 } catch (NumberFormatException e) {
                     // TODO：打log
 //                    System.out.println(weight + "转换失败");

@@ -22,7 +22,8 @@ public enum SqlEnum {
     UPDATE_CDN_IMGS_LOCAL("update product_spu_local set head_image = ?,details_images = ?,upload_flag = '1' where spu_code = ?", 8),
     PREPARE_UPDATE_SPU("select head_image,details_images,spu_code from product_spu_local where download_flag > ? and upload_flag = '1'", 9),
     BACK_SPU_CODE("select spu_code from product_spu_local where details_images like '%20180719%' ", 10),
-    BACK_DATA("select head_image,details_images,spu_code from product_spu where spu_code = ?", 11);
+    BACK_DATA("select head_image,details_images,spu_code from product_spu where spu_code = ?", 11),
+    SIZE_INFO("select DISTINCT(spu_code) from spu_size_info where type = ?", 12);
 
     private int type;
     private String desc;

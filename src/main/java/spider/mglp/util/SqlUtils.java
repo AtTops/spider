@@ -9,10 +9,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>pakage: spider.mglp.util</p>
- *
+ * <p>
  * descirption: Sql语句执行都在这里了，sql语句在SqlEnum.java中，是个枚举类。
  *
  * @author wanghai
@@ -228,7 +229,7 @@ public class SqlUtils {
     }
 
     /**
-     * 获取item_id、imgs_link（图片数据链接，手动导入的那份）
+     * 获取item_id、desc_link（数据链接，手动导入的那份）
      *
      * @return hashmap
      */
@@ -240,7 +241,7 @@ public class SqlUtils {
         ResultSet rs;
         // "SELECT item_id,url from itemId_urls where url IS NOT NULL"
         try {
-            conn = DbFactory.getConnection("sys-config-local.xml");
+            conn = DbFactory.getConnection("sys-config-test.xml");
             preStmt = conn.prepareStatement(SqlEnum.SELECT_ITEMID_LINK.getDesc());
             rs = preStmt.executeQuery();
             while (rs.next()) {
@@ -253,6 +254,32 @@ public class SqlUtils {
             DbFactory.closeConnection(conn);
         }
         return hashMap;
+    }
+
+    public static Set<String> getSpuSizeOrTry(String testOrOnline, String type) {
+        Set<String> spuSizeOrTrySet = new HashSet<>(512);
+        Connection conn = null;
+        PreparedStatement preStmt = null;
+        ResultSet rs;
+        try {
+            if (testOrOnline.equals("test")) {
+                conn = DbFactory.getConnection("sys-config-test.xml");
+            } else {
+                conn = DbFactory.getConnection("sys-config-online.xml");
+            }
+            preStmt = conn.prepareStatement(SqlEnum.SIZE_INFO.getDesc());
+            preStmt.setString(1,type);
+            rs = preStmt.executeQuery();
+            while (rs.next()) {
+                spuSizeOrTrySet.add(rs.getString("spu_code"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DbFactory.closePreStmt(preStmt);
+            DbFactory.closeConnection(conn);
+        }
+        return spuSizeOrTrySet;
     }
 
     public static void setDownloaded(int flag, String spuCode) {
@@ -485,5 +512,4 @@ public class SqlUtils {
 //            DbFactory.closeConnection(conn);
 //        }
 //    }
-
 }
