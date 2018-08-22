@@ -1,6 +1,7 @@
 package spider.mglp.Core;
 
 import etl.*;
+import mail.SendEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spider.mglp.service.impl.SizeChartImpl;
@@ -117,12 +118,11 @@ public class Pipline {
 //            LOGGER.error("try插入测试数据库出错");
 //            LOGGER.error(e.getMessage());
 //        }
-        // 13、图片
-        // 14、评论
+        // 13、图片 【图片张杨那边已经决定人工操作，爬虫获取图片自动化相关没有整理，代码： DownloadImgsImpl、GetAllimgsUrlImpl、Width750Delete】
+        // 14、评论 【已经与任务15合并打包自动运行，详情见笔记】
         // 15、印象标签
 
-        // 16【！！！！！！！！！！！！！正式库！！！！！！！！！！！！！！！！】
-        /*更新线上库*/
+        // 16【！！！！！！！！！！！！！更新线上库 ！！！！！！！！！！！！！！！！】
 //        try {
 //            SizeTryToDatabase.insert("size",localDate,"online");
 //        } catch (IOException e) {
@@ -136,5 +136,16 @@ public class Pipline {
 //            LOGGER.error(e.getMessage());
 //        }
         // 17、发邮件
+        float[][] result = null;
+        try {
+            result = ReadThisTimeSpuCodeFile.report("2018-08-21");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String content = "类型   在架数    库中数量    命中/在架数     命中百分比" + "\n" + "size   " + (int) result[0][0] + "       " + (int) result[0][1] + "        " + (int) result[0][2] + "/" + (int) result[0][0] + "      " + result[0][3] + "\n" + " try   " + (int) result[1][0] + "       " + (int) result[1][1] + "        " + (int) result[1][2] + "/" + (int) result[1][0] + "      " + result[1][3];
+//        TODO:邮件发送验证
+//        SendEmail sendEmail = new SendEmail("wang.hai@yuncloset.com", "测试", content);
+//        sendEmail.send();
+
     }
 }
