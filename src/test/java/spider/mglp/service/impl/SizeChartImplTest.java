@@ -69,7 +69,7 @@ public class SizeChartImplTest {
         int column = trs.size();
         System.out.println("该试穿表的行数是：" + column);
         String spuCode = "12345678";
-        String filePathAndName = UrlEnum.BASIC_OUTFILE_PATH.getDesc() + spuCode + "_" + column + ".csv";
+        String filePathAndName = UrlEnum.RATE_PATH.getDesc() + spuCode + "_" + column + ".csv";
         // 创建CSV写对象
         CsvWriter csvWriter = new CsvWriter(filePathAndName, ',', Charset.forName("UTF-8"));
         // 获取tr

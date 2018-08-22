@@ -12,7 +12,7 @@ public enum SqlEnum {
     BATCH_UPDATE_IMGS_URL("update product_spu_local set spider_imgs_all = ? where spu_code = ?", 1),
 //    SPU_TLINK_SELL("select spu_code,taobao_link,season from product_spu_local where season like '%2%' and vendor_id = 28", 2),
     SPU_TLINK_SELL("select spu_code,taobao_link from product_spu where store_spu_code is not null and status = 1 and head_image !='' and LENGTH(taobao_link) > 40;", 2),
-    SPU_TLINK_TIME("select spu_code,taobao_link from product_spu where LENGTH(taobao_link) > 40", 3),
+    SPU_TLINK_TIME("select spu_code,taobao_link from product_spu where c_time > ?", 3),
     SPU_TLINK_BY_SPUCODE("select spu_code,taobao_link from product_spu_local where spucode = ?", 4),
 //    SELECT_SPU_IMG_URL("SELECT spu_code,spider_imgs_all from product_spu_local where length(spider_imgs_all) > 4 ", 3),
     SPU_UPLOADED("SELECT spu_code from product_spu_local where length(spider_imgs_all) > 4 and upload_flag = '1'", 5),

@@ -40,7 +40,7 @@ public enum UrlEnum {
     ADJUST_LABEL_FILE_JSON("/Users/wanghai/spider/label/files/json/adjust/", 17),
     // try处理为json的中间状态（未处理体重形式），没什么用
     TRY_PATH_WRITE_TMP("/Users/wanghai/spider/tmp/try_tmp.json", 18),
-    BASIC_OUTFILE_PATH("/Users/Shared/", 19);
+    RATE_PATH("/Users/wanghai/spider/rate/csv/original/", 19);
 
     private int type;
     private String desc;

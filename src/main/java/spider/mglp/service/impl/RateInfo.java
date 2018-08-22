@@ -11,6 +11,7 @@ import spider.mglp.util.SqlUtils;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.Set;
 /**
  * <p>pakage: spider.mglp.service.impl</p>
  *
- * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周1、周5上午8点15分定时运行
+ * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周1上午8点15分定时运行【15 8 * * 1】
  *
  * @author wanghai
  * @version V1.0
@@ -28,47 +29,37 @@ import java.util.Set;
 public class RateInfo {
     private static final Logger LOGGER = LoggerFactory.getLogger(RateInfo.class);
 
-    public void getAllRateInfo() throws IOException {
+    public void getAllRateInfo(String localDate) throws IOException {
         // 查询数据库，获取所有的spu_code和taobao_link
-        HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink();
+        HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink(localDate);
 
-        // 该文件存放所有已经获取了信息的spu，itemId，或者没有获取到的，比如说下架啥的
-        File getOrSout = new File(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "/rate/getorsout.csv");
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(getOrSout, true));
-
-        File rateInfo = new File(UrlEnum.BASIC_OUTFILE_PATH.getDesc() + "/rate/all_rate.csv");
+        File rateInfo = new File(UrlEnum.RATE_PATH.getDesc() + localDate + "+7_rate.csv");
         BufferedWriter buffWriter = new BufferedWriter(new FileWriter(rateInfo, true));
 
-        Set<String> spidered = spidered("/Users/Shared/rate/all_rate.csv");
         for (Map.Entry<String, String> entry : spuIDMap.entrySet()) {
             int begin = entry.getValue().lastIndexOf("id=") + 3;
             String itemId = entry.getValue().substring(begin, begin + 12);
             String spuCode = entry.getKey();
-
-            if (spidered.contains(spuCode)){
-                continue;
-            }
             String urlPrefix = "https://rate.taobao.com/feedRateList.htm?auctionNumId=" + itemId + "&currentPageNum=";
             // 首先获取第一页信息，然后获取之后的页面的评论信息
-            int pages = getRateInfo(itemId, spuCode, urlPrefix, 1, bufferedWriter, buffWriter);
+            int pages = getRateInfo(itemId, spuCode, urlPrefix, 1, buffWriter);
             if (pages > 1) {
                 for (int page = 2; page <= pages; page++) {
-                    int pagesInside = getRateInfo(itemId, spuCode, urlPrefix, page, bufferedWriter, buffWriter);
-                    if (pagesInside == -1){
+                    int pagesInside = getRateInfo(itemId, spuCode, urlPrefix, page, buffWriter);
+                    if (pagesInside == -1) {
                         // 后面的留言都已经被店家删除
-                        bufferedWriter.write(spuCode + "," + itemId + "," + page + ",after, deleted \n");
+                        System.out.println((spuCode + "," + itemId + "," + page + ",after, deleted \n"));
                         break;
                     }
                 }
             }
         }
-        bufferedWriter.flush();
         buffWriter.flush();
-        bufferedWriter.close();
         buffWriter.close();
     }
+
     // 已经爬取过了的spucode
-    public Set<String> spidered(String path){
+    public Set<String> spidered(String path) {
         Set<String> spuSet = null;
 
         // 读取文件spucode过滤
@@ -83,7 +74,7 @@ public class RateInfo {
                 String txt;
                 // 读取文件，将文件内容放入到set中
                 while ((txt = br.readLine()) != null) {
-                    spuSet.add(txt.substring(0,12));
+                    spuSet.add(txt.substring(0, 12));
                 }
                 br.close();
             }
@@ -92,11 +83,11 @@ public class RateInfo {
             e.printStackTrace();
         }
         assert spuSet != null;
-        System.out.println("spuSet size:  "+spuSet.size());
+        System.out.println("spuSet size:  " + spuSet.size());
         return spuSet;
     }
 
-    public int getRateInfo(String itemId, String spuCode, String urlPrefix, int pageNo, BufferedWriter bufferedWriter, BufferedWriter buffWriter) throws IOException {
+    public int getRateInfo(String itemId, String spuCode, String urlPrefix, int pageNo, BufferedWriter buffWriter) throws IOException {
         String url = urlPrefix + pageNo;
         String jsonText;
         StringBuilder sb = null;
@@ -119,8 +110,7 @@ public class RateInfo {
         if (jsonText.length() < 500) {
             System.out.println("===" + jsonText);
             // 写进文件备份
-            bufferedWriter.write(spuCode + "," + itemId + "," + pageNo + ",can not get rate info\n");
-            bufferedWriter.flush();
+            System.out.println(spuCode + "," + itemId + "," + pageNo + ",can not get rate info\n");
             return -1;
         }
         ObjectMapper objMapper = new ObjectMapper();
@@ -134,8 +124,7 @@ public class RateInfo {
         int total = root.path("total").asInt();
         if (total < 1) {
             // 写进文件备份
-            bufferedWriter.write(spuCode + "," + itemId + "," + pageNo + ",not rate info\n");
-            bufferedWriter.flush();
+            System.out.println(spuCode + "," + itemId + "," + pageNo + ",not rate info\n");
             return -1;
         }
         JsonNode commentsNode = root.path("comments");
@@ -166,18 +155,12 @@ public class RateInfo {
             }
             buffWriter.write(builder.toString() + "\n");
         }
-        int pages = (int) Math.ceil(total / 20);
-        if (pages == pageNo) {
-            // 信息获取完毕，写入已获取评论的文件
-            bufferedWriter.write(spuCode + "," + itemId + "\n");
-            bufferedWriter.flush();
-        }
-        return pages;
+        return (int) Math.ceil(total / 20);
     }
 
     public static void main(String[] args) throws IOException {
+        String lastDate = LocalDate.now().minusDays(7).toString();
         RateInfo rateInfo = new RateInfo();
-        rateInfo.getAllRateInfo();
-//        rateInfo.spidered("/Users/Shared/rate/all_rate.csv");
+        rateInfo.getAllRateInfo(lastDate);
     }
 }

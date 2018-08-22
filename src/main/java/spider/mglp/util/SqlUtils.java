@@ -57,18 +57,18 @@ public class SqlUtils {
     /**
      * 获取今天在架的Spu_code、taobao_link    ===========================   [ 线上数据库 ]
      *
-     * @param ifAll 如果传入，则查找按日期处理评论标签，TODO
+     * @param dateStr 如果传入，则查找按日期处理评论标签，TODO
      * @return HashMap
      */
-    public static HashMap<String, String> getSpuCodeAndTbLink(String... ifAll) {
+    public static HashMap<String, String> getSpuCodeAndTbLink(String... dateStr) {
         System.out.println("获取Spu_code、taobao_link");
         HashMap<String, String> hashMap = new HashMap<>(512, 0.8f);
         Connection conn = null;
         PreparedStatement preStmt = null;
         ResultSet rs;
         String sql;
-        if (ifAll.length > 0) {
-            sql = SqlEnum.SPU_TLINK_BY_SPUCODE.getDesc();
+        if (dateStr.length > 0) {
+            sql = SqlEnum.SPU_TLINK_TIME.getDesc();
         } else {
             sql = SqlEnum.SPU_TLINK_SELL.getDesc();
         }
@@ -76,10 +76,9 @@ public class SqlUtils {
         try {
             conn = DbFactory.getConnection("sys-config-online.xml");
             preStmt = conn.prepareStatement(sql);
-            if (ifAll.length > 0) {
+            if (dateStr.length > 0) {
                 // 两个日期
-                preStmt.setString(1, ifAll[0]);
-                preStmt.setString(2, ifAll[1]);
+                preStmt.setString(1, dateStr[0]);
             }
             rs = preStmt.executeQuery();
             while (rs.next()) {
