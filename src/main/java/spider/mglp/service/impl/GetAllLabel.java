@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 /**
- * descirption:
+ * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周五上午8点15分定时运行【15 8 * * 5】
  *
  * @author wanghai
  * @version V1.0
@@ -22,25 +22,24 @@ public class GetAllLabel {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetAllLabel.class);
 
     /**
-     * 获取数据库中所有Spu的评价标签，将json数据持久化，解析处理交给 ()函数
+     * 获取数据库中所有Spu的评价标签，将json数据持久化，解析处理交给 parse()函数
      *
      * @param localDate
      */
     public void getLabelOriginal(String localDate) throws IOException, InterruptedException {
-        String parentPath = UrlEnum.ALL_LABEL_FILE_JSON.getDesc() + localDate;
+        String parentPath = UrlEnum.ALL_LABEL_FILE_JSON.getDesc() + localDate + "+7";
         // 先建立日期目录
         File file = new File(parentPath);
         // 如果文件夹不存在则创建
         if (!file.exists() && !file.isDirectory()) {
             if (!file.mkdir()) {
-                LOGGER.error("创建目录  {}  失败", localDate);
+                LOGGER.error("创建目录  {}  失败", parentPath + localDate);
             }
         }
 
         // 查询数据库，获取所有的spu_code和taobao_link
-        HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink();
-        System.out.println(spuIDMap.size());
-        int count = 0;
+        HashMap<String, String> spuIDMap = SqlUtils.getSpuCodeAndTbLink(localDate);
+        System.out.println("共有 " + spuIDMap.size() + "个新增的spu");
         for (Map.Entry<String, String> entry : spuIDMap.entrySet()) {
             int begin = entry.getValue().lastIndexOf("id=") + 3;
             String itemId = entry.getValue().substring(begin, begin + 12);
@@ -50,10 +49,17 @@ public class GetAllLabel {
             Random rand = new Random();
             Thread.sleep(rand.nextInt(1000) + 800);
             originalLabelToFile(url, spuCode, parentPath + "/");
-            System.out.println(count++);
         }
     }
 
+    /**
+     * 每个spu的标签信息写磁盘
+     *
+     * @param url
+     * @param spu
+     * @param parentPath
+     * @throws IOException
+     */
     public void originalLabelToFile(String url, String spu, String parentPath) throws IOException {
         String jsonText;
         StringBuilder sb = null;
@@ -65,23 +71,22 @@ public class GetAllLabel {
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
-            e.printStackTrace();
+            System.exit(-1);
         }
 
-        if (sb != null) {
-            BufferedWriter buffWriter = new BufferedWriter(new FileWriter(new File(parentPath + spu + "_label.json")));
-            jsonText = sb.toString();
-            // 裁剪前后的括号
-            jsonText = jsonText.substring(1, jsonText.length() - 1);
-            buffWriter.write(jsonText);
-            buffWriter.close();
-        }
+        BufferedWriter buffWriter = new BufferedWriter(new FileWriter(new File(parentPath + spu + "_label.json")));
+        jsonText = sb.toString();
+        // 裁剪前后的括号
+        jsonText = jsonText.substring(1, jsonText.length() - 1);
+        buffWriter.write(jsonText);
+        buffWriter.close();
     }
 
-    public void parse(String localDate) throws IOException {
-        String fileName = UrlEnum.ADJUST_LABEL_FILE_JSON.getDesc() + localDate + "_label.txt";
+    public void parse(String localDate) throws IOException, InterruptedException {
+        getLabelOriginal(localDate);
+        String fileName = UrlEnum.ADJUST_LABEL_FILE_JSON.getDesc() + localDate + "+7_label.txt";
         FileWriter fileWriter = new FileWriter(new File(fileName));
-        String parentPath = UrlEnum.ALL_LABEL_FILE_JSON.getDesc() + localDate;
+        String parentPath = UrlEnum.ALL_LABEL_FILE_JSON.getDesc() + localDate + "+7";
         File files = new File(parentPath);
         File[] fs = files.listFiles();    //遍历path下的文件和目录，放在File数组中
         int impress = 0;
@@ -111,7 +116,7 @@ public class GetAllLabel {
         fileWriter.flush();
         fileWriter.close();
         jsonToCsv(fileName);
-        System.out.println("有效数： " + impress);
+        System.out.println("tag有效的spu文件数： " + impress);
     }
 
     public void jsonToCsv(String jsonPath) throws IOException {
@@ -132,16 +137,5 @@ public class GetAllLabel {
         fileWriter.flush();
         fileWriter.close();
         brd.close();
-    }
-
-
-    public static void main(String[] args) {
-        GetAllLabel getAllLabel = new GetAllLabel();
-        try {
-            getAllLabel.parse("2018-08-17");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // {"watershed":100,"sellerRefundCount":0,"isRefundUser":true,"showPicRadio":true,"data":{"impress":[],"count":{"normal":0,"totalFull":10,"total":10,"bad":0,"tryReport":0,"goodFull":10,"additional":0,"pic":0,"good":10,"hascontent":0,"correspond":0},"attribute":[],"newSearch":false,"correspond":"0.0","spuRatting":[]},"skuFull":false,"isShowDefaultSort":true,"askAroundDisabled":true,"skuSelected":false}
     }
 }

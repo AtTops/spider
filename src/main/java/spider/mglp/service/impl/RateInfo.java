@@ -58,35 +58,6 @@ public class RateInfo {
         buffWriter.close();
     }
 
-    // 已经爬取过了的spucode
-    public Set<String> spidered(String path) {
-        Set<String> spuSet = null;
-
-        // 读取文件spucode过滤
-
-        File file = new File(path);
-        try {
-            InputStreamReader read = new InputStreamReader(new FileInputStream(
-                    file), "utf-8");
-            if (file.isFile() && file.exists()) {
-                spuSet = new HashSet<>();
-                BufferedReader br = new BufferedReader(read);
-                String txt;
-                // 读取文件，将文件内容放入到set中
-                while ((txt = br.readLine()) != null) {
-                    spuSet.add(txt.substring(0, 12));
-                }
-                br.close();
-            }
-            read.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        assert spuSet != null;
-        System.out.println("spuSet size:  " + spuSet.size());
-        return spuSet;
-    }
-
     public int getRateInfo(String itemId, String spuCode, String urlPrefix, int pageNo, BufferedWriter buffWriter) throws IOException {
         String url = urlPrefix + pageNo;
         String jsonText;
@@ -161,6 +132,14 @@ public class RateInfo {
     public static void main(String[] args) throws IOException {
         String lastDate = LocalDate.now().minusDays(7).toString();
         RateInfo rateInfo = new RateInfo();
+        // 抓取评论信息
         rateInfo.getAllRateInfo(lastDate);
+        // 抓取标签（用户印象）信息
+        GetAllLabel getAllLabel = new GetAllLabel();
+        try {
+            getAllLabel.parse(lastDate);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
