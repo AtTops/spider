@@ -24,7 +24,6 @@ public class IllegalCsv {
     private static final String[] SIZE_HEADER = {"尺", "s", "S"};
     private static final String[] SIZE_BODY = {"XS", "S", "M", "L", "xs", "s", "m", "l"};
     private static final String[] TRY_HEADER = {"试穿者", "试穿人"};
-    private static final String[] TRY_BODY = {"XS", "S", "M", "L", "xs", "s", "m", "l"};
 
     /**
      * 处理size中的不合法数据
@@ -200,14 +199,5 @@ public class IllegalCsv {
         }
         csvWriter.flush();
         csvWriter.close();
-    }
-
-    public static void main(String[] args) {
-        IllegalCsv illegalCsv = new IllegalCsv();
-        try {
-            illegalCsv.whichNeedTranspose("2018-08-14");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

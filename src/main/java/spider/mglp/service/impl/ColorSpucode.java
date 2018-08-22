@@ -75,10 +75,4 @@ public class ColorSpucode {
         }
         System.out.println(count);
     }
-
-    public static void main(String[] args) {
-        String path = "/Users/wanghai/images/img_20";
-        String removePath = "/Users/wanghai/images/filter_img_20";
-        ColorSpucode.addColorAndDeleteWidth(path, removePath);
-    }
 }

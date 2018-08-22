@@ -139,7 +139,4 @@ public class ReadThisTimeSpuCodeFile {
         return result;
     }
 
-    public static void main(String[] args) throws IOException {
-        ReadThisTimeSpuCodeFile.report("2018-08-21");
-    }
 }

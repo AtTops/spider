@@ -154,11 +154,4 @@ public class UpdateImage {
 
         return cdnPath;
     }
-
-    public static void main(String[] args) {
-        String path = "/Users/wanghai/Downloads/to_upload/0";
-//        System.out.println(UpdateImage.upload(path));
-        UpdateImage.uploadImage(path);
-//        HashMapUpdateImage.getFileNumPerSpu("/Users/wanghai/Downloads/to_upload/test");
-    }
 }

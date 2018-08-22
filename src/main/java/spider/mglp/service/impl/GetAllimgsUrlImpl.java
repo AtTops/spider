@@ -140,9 +140,4 @@ public class GetAllimgsUrlImpl implements GetAllImgsUrl {
         }
         return spuIDMap;
     }
-
-    public static void main(String[] args) {
-        GetAllimgsUrlImpl a = new GetAllimgsUrlImpl();
-//        a.getAllImgsUrlFromApi();
-    }
 }

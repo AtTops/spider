@@ -150,16 +150,4 @@ public class SendEmail {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        float[][] result = null;
-        try {
-            result = ReadThisTimeSpuCodeFile.report("2018-08-21");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String content = "类型   在架数    库中数量    命中/在架数     命中百分比" + "\n" + "size   " + (int) result[0][0] + "       " + (int) result[0][1] + "        " + (int) result[0][2] + "/" + (int) result[0][0] + "      " + result[0][3] + "\n" + " try   " + (int) result[1][0] + "       " + (int) result[1][1] + "        " + (int) result[1][2] + "/" + (int) result[1][0] + "      " + result[1][3];
-        SendEmail sendEmail = new SendEmail("wang.hai@yuncloset.com", "测试", content);
-        sendEmail.send();
-    }
 }

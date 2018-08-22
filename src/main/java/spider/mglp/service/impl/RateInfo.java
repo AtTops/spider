@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * <p>pakage: spider.mglp.service.impl</p>
  *
- * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周1上午8点15分定时运行【15 8 * * 1】
+ * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周五上午8点15分定时运行【15 8 * * 5】
  *
  * @author wanghai
  * @version V1.0

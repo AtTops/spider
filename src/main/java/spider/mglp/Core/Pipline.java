@@ -138,7 +138,7 @@ public class Pipline {
         // 17、发邮件
         float[][] result = null;
         try {
-            result = ReadThisTimeSpuCodeFile.report("2018-08-21");
+            result = ReadThisTimeSpuCodeFile.report(localDate);
         } catch (IOException e) {
             e.printStackTrace();
         }

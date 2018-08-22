@@ -97,9 +97,4 @@ public class RenameBack {
                 return 99;
         }
     }
-
-    public static void main(String[] args) {
-        RenameBack renameBack = new RenameBack();
-        renameBack.renameBackPic("/Users/wanghai/Downloads/B/0","/Users/wanghai/Downloads/B/0");
-    }
 }
