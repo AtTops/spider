@@ -9,17 +9,18 @@ import spider.mglp.util.SqlUtils;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
- * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周五上午8点15分定时运行【15 8 * * 5】
+ * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周五上午8点15分定时运行【15 8 * * 5】,已经打包在测试服务器运行
  *
  * @author wanghai
  * @version V1.0
  * @since <pre>2018/8/17 下午2:53</pre>
  */
 public class GetAllLabel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetAllLabel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("spiderDailyFile");
 
     /**
      * 获取数据库中所有Spu的评价标签，将json数据持久化，解析处理交给 parse()函数
@@ -137,5 +138,25 @@ public class GetAllLabel {
         fileWriter.flush();
         fileWriter.close();
         brd.close();
+    }
+
+    public static void main(String[] args) {
+        String lastDate = LocalDate.now().minusDays(7).toString();
+        RateInfo rateInfo = new RateInfo();
+        // 抓取评论信息
+        System.out.println("开始抓取评论信息");
+        try {
+            rateInfo.getAllRateInfo(lastDate);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 抓取标签（用户印象）信息
+        System.out.println("开始抓取标签（用户印象）信息");
+        GetAllLabel getAllLabel = new GetAllLabel();
+        try {
+            getAllLabel.parse(lastDate);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -37,11 +37,11 @@ public enum UrlEnum {
     // 调整为线上需求的json格式的存储路径
     JSON_TRY_SUCCESS_ADJUST("/Users/wanghai/spider/try/files/json/adjust/", 15),
 
-    ALL_LABEL_FILE_JSON("/Users/wanghai/spider/label/files/json/original/", 16),
-    ADJUST_LABEL_FILE_JSON("/Users/wanghai/spider/label/files/json/adjust/", 17),
+    ALL_LABEL_FILE_JSON("/home/wanghai/spider/label/files/json/original/", 16),
+    ADJUST_LABEL_FILE_JSON("/home/wanghai/spider/label/files/json/adjust/", 17),
     // try处理为json的中间状态（未处理体重形式），没什么用
     TRY_PATH_WRITE_TMP("/Users/wanghai/spider/tmp/try_tmp.json", 18),
-    RATE_PATH("/Users/wanghai/spider/rate/csv/original/", 19);
+    RATE_PATH("/home/wanghai/spider/rate/csv/original/", 19);
 
     private int type;
     private String desc;

@@ -11,16 +11,13 @@ import spider.mglp.util.SqlUtils;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <p>pakage: spider.mglp.service.impl</p>
  *
- * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周五上午8点15分定时运行【15 8 * * 5】
+ * descirption:获取所有的评价信息，考虑到我们更新spu的频率，每周五上午8点15分定时运行【15 8 * * 5】,已经打包在测试服务器运行
  *
  * @author wanghai
  * @version V1.0
@@ -73,7 +70,9 @@ public class RateInfo {
             e.printStackTrace();
         }
 
-        assert sb != null;
+        if (sb == null) {
+            return -1;
+        }
         jsonText = sb.toString();
         // 裁剪前后的括号
         jsonText = jsonText.substring(1, jsonText.length() - 1);
@@ -91,7 +90,9 @@ public class RateInfo {
         } catch (JsonParseException e) {
             System.out.println(jsonText);
         }
-        assert root != null;
+        if (root == null) {
+            return -1;
+        }
         int total = root.path("total").asInt();
         if (total < 1) {
             // 写进文件备份
@@ -127,19 +128,5 @@ public class RateInfo {
             buffWriter.write(builder.toString() + "\n");
         }
         return (int) Math.ceil(total / 20);
-    }
-
-    public static void main(String[] args) throws IOException {
-        String lastDate = LocalDate.now().minusDays(7).toString();
-        RateInfo rateInfo = new RateInfo();
-        // 抓取评论信息
-        rateInfo.getAllRateInfo(lastDate);
-        // 抓取标签（用户印象）信息
-        GetAllLabel getAllLabel = new GetAllLabel();
-        try {
-            getAllLabel.parse(lastDate);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
